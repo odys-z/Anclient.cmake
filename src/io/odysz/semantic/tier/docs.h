@@ -3,17 +3,6 @@
 #include <io/odysz/anson.h>
 
 namespace anson {
-class JavaEnum {
-public:
-    string v;
-
-    /**
-     * Returns the string representation of this share flag,
-     * mimicking Java's Enum.name()
-     */
-    const string& name() const { return v; }
-};
-
 class ShareFlag : public IJsonable, JavaEnum {
     /** Kept as private file ('🔒') at private node. */
     static inline const string prv = "🔒";

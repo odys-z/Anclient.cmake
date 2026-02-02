@@ -13,8 +13,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # This will save time for each clean build.
 # [try] Uncomment this for the first time as the network condition is complicate in China, by the GFW.
 # qt creator -DQT_CREATOR_SKIP_VCPKG_SETUP:BOOL=ON
-# set(VCPKG_USE_SYSTEM_BINARIES ON)
-# set(X_VCPKG_ASSET_SOURCES "clear")
 
 # see ping.cpp
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

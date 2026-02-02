@@ -9,8 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(anclient INTERFACE
     io/odysz/clients.h
     io/odysz/semantier.h
-    # io/odysz/jprotocol.h
-    # io/odysz/json.h
+    io/odysz/semantic/tier/docs.h
 )
 
 add_library(anclient::anclient ALIAS anclient)
@@ -21,8 +20,6 @@ target_sources(anclient INTERFACE
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
         io/odysz/anson.h
-        # io/odysz/jprotocol.h
-        # io/odysz/json.h
 )
 
 target_include_directories(anson INTERFACE

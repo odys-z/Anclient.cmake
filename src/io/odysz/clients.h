@@ -28,44 +28,20 @@ class Doclientier : public WSClient {
 public:
     Doclientier(string device) : device(device) {}
 
-    // void push_files_TDD(string paths, OnProgress onprc) {
+    void push_files(const vector<string>& paths, OnProgress onprc) {
 
-    //     // Get an iterator for the JavaScript object
-    //     QJSValueIterator it(paths);
+        // PathsPage sync_page(device);
+        DocsReq reqbd{device, DocsReq::A::requestSyn};
 
-    //     while (it.hasNext()) {
-    //         it.next();
-    //         QString currentPath = it.name();
-    //         // Directly set the property in the JS engine to 'true'
-    //         // This modifies the original object in QML memory
-    //         cout << "You are in cpp" << currentPath;
-    //         paths.setProperty(it.name(), true);
+        vector<string>::const_iterator it = paths.begin();
+        for (; it != paths.end(); ++it) {
+            reqbd.syncingPage.append(*it, "synching");
+            onprc(*it, "synching");
+        }
 
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(400));
+        AnsonMsg<DocsReq> req{Port::docstier};
+        req.Body(reqbd);
 
-    //         // emit fileStatusChanged(currentPath, "synching");
-    //         onprc(currentPath, "synching");
-    //     }
-    // }
-
-    // void push_files(QJSValue paths, OnProgress onprc) {
-
-    //     // PathsPage sync_page(device);
-    //     DocsReq reqbd{device, DocsReq::A::requestSyn};
-
-    //     QJSValueIterator it(paths);
-    //     while (it.hasNext()) {
-    //         it.next();
-    //         QString pth = it.name();
-
-    //         reqbd.syncingPage.append(pth.toStdString(), "synching");
-
-    //         onprc(pth, "synching");
-    //     }
-    // }
-
-// signals:
-//     // Signal sends the specific path and success/fail
-//     void fileStatusChanged(QString path, string status);
+    }
 };
 }

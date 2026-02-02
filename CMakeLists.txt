@@ -8,19 +8,17 @@ project(anclient.cmake LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Generate compile_commands.json for clangd/IDE integration (single-config only)
-
+# Generate compile_commands.json for clangd/IDE integration
 # we have network problem
 # This will save time for each clean build.
-# [try] Comment this out for the first time as the network condition is complicate in China, by the GFW.
-if(NOT CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-endif()
+# [try] Uncomment this for the first time as the network condition is complicate in China, by the GFW.
 # qt creator -DQT_CREATOR_SKIP_VCPKG_SETUP:BOOL=ON
 # set(VCPKG_USE_SYSTEM_BINARIES ON)
 # set(X_VCPKG_ASSET_SOURCES "clear")
 
+# see ping.cpp
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 message(STATUS "=========================================== CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
 message(STATUS "=========================================== CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -48,10 +46,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+# before src
+option(ANCLIENT_BUILD_TESTS "Build tests for Anclient.cmake" ON)
 add_subdirectory(src)
 
 # 3. Add tests (only if this is the main project)
-option(ANCLIENT_BUILD_TESTS "Build tests for Anclient.cmake" ON)
 if (ANCLIENT_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)

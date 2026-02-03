@@ -1,9 +1,11 @@
 #pragma once
 
 #include <io/odysz/anson.h>
+#include <io/odysz/common.h>
 
 namespace anson {
-class ShareFlag : public IJsonable, JavaEnum {
+class ShareFlag : public IJsonable, public JavaConsts<string> {
+public:
     /** Kept as private file ('🔒') at private node. */
     static inline const string prv = "🔒";
 
@@ -31,8 +33,7 @@ class ShareFlag : public IJsonable, JavaEnum {
     /** what's this for ? */
     static inline const string unknown = "⚠";
 
-public:
-    ShareFlag(string& f) : JavaEnum(f) {}
+    ShareFlag(string& f) : JavaConsts(f) {}
 
     IJsonable* toBlock(ostream& stream, JsonOpt& opts) override {
         stream.put('\"');

@@ -1,11 +1,10 @@
 #pragma once
 
 #include <functional>
-#include <thread>
-#include <chrono>
 #include <string>
 
 #include "semantier.h"
+#include <io/odysz/semantic/tier/docs.h>
 
 using namespace std;
 
@@ -28,20 +27,15 @@ class Doclientier : public WSClient {
 public:
     Doclientier(string device) : device(device) {}
 
-    void push_files(const vector<string>& paths, OnProgress onprc) {
-
-        // PathsPage sync_page(device);
+    void push_files(const map<string, vector<string>>& paths, OnProgress onprc) {
         DocsReq reqbd{device, DocsReq::A::requestSyn};
-
-        vector<string>::const_iterator it = paths.begin();
-        for (; it != paths.end(); ++it) {
-            reqbd.syncingPage.append(*it, "synching");
-            onprc(*it, "synching");
+        for (auto& [pth, stas] : paths) {
+            reqbd.syncingPage.append(pth, {ShareFlag::publish});
+            onprc(pth, ShareFlag::pushing);
         }
 
         AnsonMsg<DocsReq> req{Port::docstier};
         req.Body(reqbd);
-
     }
 };
 }

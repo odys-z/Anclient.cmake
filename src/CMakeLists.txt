@@ -10,6 +10,7 @@ add_library(anclient INTERFACE
     io/odysz/clients.h
     io/odysz/semantier.h
     io/odysz/semantic/tier/docs.h
+    io/oz/anclient/socketier.h
 )
 
 add_library(anclient::anclient ALIAS anclient)

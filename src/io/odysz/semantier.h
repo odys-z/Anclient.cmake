@@ -26,8 +26,8 @@ public:
 };
 
 /**
- * @brief The DocSyncReq class
- * java type: io.odysz.semantics.SemanticObject
+ * @brief The DocsReq class
+ * java type: io.odysz.semantics.tier.docs.DocsReq
  */
 class DocsReq : public UserReq {
 public:

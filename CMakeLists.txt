@@ -23,7 +23,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 message(STATUS "=========================================== CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
 message(STATUS "=========================================== CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
 
-# ./vcpkg install entt:x64-windows --x-install-root="../anclient/cmake/vcpkg_packages"
+# ./vcpkg install entt:x64-windows --x-install-root="../Anclient.cmake/vcpkg_packages"
 find_package(EnTT CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 

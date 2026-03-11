@@ -4,7 +4,7 @@
 #include <string>
 
 #include "semantier.h"
-#include <io/odysz/semantic/tier/docs.h>
+#include "io/odysz/semantic/tier/docs.h"
 
 using namespace std;
 
@@ -16,6 +16,23 @@ namespace anson {
  * JProtocol.OnProgress
  */
 using OnProgress = std::function<void(const string& path, std::string status)>;
+
+class Clients {
+public:
+
+    inline static AnsonResp pingLess(string uri, string msg, OnError) {
+        EchoReq req;
+        req.echo = msg;
+
+        qDebug() << "[Qt Clinet Ping].body" << req.toBlock().c_str();
+
+        AnsonMsg<WSEchoReq> anmsg(Port(Port::echo), req);
+        // anmsg.body.push_back(req);
+        string reqs = anmsg.toBlock<AnsonMsg<WSEchoReq>>();
+        qDebug() << "[Qt Clinet Ping]" << reqs.c_str();
+        skt.sendTextMessage(reqs.c_str());
+    }
+};
 
 class WSClient {
 

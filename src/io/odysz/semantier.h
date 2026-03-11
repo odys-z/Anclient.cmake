@@ -19,6 +19,8 @@ public:
      */
     map<string, vector<string>>clientPaths;
 
+    PathsPage() {}
+
     PathsPage* append(const string& pth, const string& shareflag) {
         clientPaths[pth] = {device, shareflag, "by", "now", "false"};
         return this;

@@ -4,7 +4,8 @@
 #include <io/odysz/common.h>
 
 namespace anson {
-class ShareFlag : public IJsonable, public JavaConsts<string> {
+// class ShareFlag : public IJsonable, public JavaConsts<string> {
+class ShareFlag : public JavaEnum {
 public:
     /** Kept as private file ('🔒') at private node. */
     static inline const string prv = "🔒";
@@ -33,21 +34,21 @@ public:
     /** what's this for ? */
     static inline const string unknown = "⚠";
 
-    ShareFlag(string& f) : JavaConsts(f) {}
+    // ShareFlag(string& f) : JavaConsts(f) {}
 
-    IJsonable* toBlock(ostream& stream, JsonOpt& opts) override {
-        stream.put('\"');
-        stream.write(name().c_str(), name().size());
-        stream.put('\"');
-        return this;
-    }
+    // IJsonable* toBlock(ostream& stream, JsonOpt& opts) override {
+    //     stream.put('\"');
+    //     stream.write(name().c_str(), name().size());
+    //     stream.put('\"');
+    //     return this;
+    // }
 
-    IJsonable* toJson(string& buf) override {
-        buf += '\"';
-        buf += name();
-        buf += '\"';
-        return this;
-    }
+    // IJsonable* toJson(string& buf) override {
+    //     buf += '\"';
+    //     buf += name();
+    //     buf += '\"';
+    //     return this;
+    // }
 };
 
 }

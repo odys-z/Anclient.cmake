@@ -39,6 +39,16 @@ FetchContent_Declare(
 set(ANSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(anson.cmake)
 
+# pip install meson ninja
+FetchContent_Declare(
+  cpr
+  GIT_REPOSITORY https://github.com/libcpr/cpr.git
+  # https://github.com/libcpr/cpr/releases
+  GIT_TAG f091b2c061b307ee89b164c39976fc9202a1c79d) # 1.14.2
+
+FetchContent_MakeAvailable(cpr)
+
+
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git

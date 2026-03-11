@@ -10,6 +10,7 @@ add_library(anclient INTERFACE
     io/odysz/clients.h
     io/odysz/semantier.h
     io/odysz/semantic/tier/docs.h
+    io/odysz/semantic/json.expect.h
     io/oz/anclient/socketier.h
 )
 
@@ -31,6 +32,7 @@ target_include_directories(anson INTERFACE
 target_link_libraries(anson INTERFACE
     EnTT::EnTT
     nlohmann_json::nlohmann_json
+    cpr::cpr
     anson
 )
 
@@ -38,6 +40,8 @@ target_link_libraries(anson INTERFACE
 # clangd helper, see also .clangd/index
 if(ANCLIENT_BUILD_TESTS)
     # set(ANSON_BUILD_TESTS ON) not working
-    add_executable(anclient_clangd_helper dev/ping.cpp)
+    add_executable(anclient_clangd_helper dev/ping.cpp
+        io/odysz/semantic/json.expect.h
+        io/odysz/semanitcs.h)
     target_link_libraries(anclient_clangd_helper PRIVATE anson)
 endif()

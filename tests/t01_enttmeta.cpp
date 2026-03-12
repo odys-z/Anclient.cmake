@@ -22,6 +22,7 @@ TEST(ANCLIENT, PING) {
 
     OnError errctx = []() {
 
-    }
+    };
+
     Clients::pingLess("Anson.cmake/test", errctx);
 }

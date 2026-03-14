@@ -10,6 +10,25 @@ using namespace std;
 
 namespace anson {
 
+class SessionClient {
+
+public:
+    string jservrt;
+
+    SessionClient(string jserv) : jservrt(jserv) {
+    }
+
+    template<typename R>
+    AnsonResp commit(AnsonMsg<R> req, OnError err) {
+        AnsonResp resp;
+        return resp;
+    }
+};
+
+class InsecureClient : public SessionClient {
+public:
+    InsecureClient(string jserv) : SessionClient(jserv) {}
+};
 
 /**
  * TODO move to a stand alone protocol tier?
@@ -20,7 +39,7 @@ using OnProgress = std::function<void(const string& path, std::string status)>;
 class Clients {
 public:
 
-    inline static AnsonResp pingLess(string uri, string msg, OnError err) {
+    inline static AnsonResp pingLess(JProtocol& protocol, string uri, string msg, OnError err) {
         EchoReq req;
         req.echo = msg;
         #ifdef ANCLIENT_BUILD_TESTS
@@ -33,9 +52,8 @@ public:
         cout << "[Clinet.pingLess Msg] " << reqs.c_str();
         #endif
 
-        JservUrl jserv;
-        InsecureClient client{jserv};
-        client.commit(anmsg, err);
+        InsecureClient client{protocol.prtocolpath};
+        return client.commit(anmsg, err);
     }
 };
 

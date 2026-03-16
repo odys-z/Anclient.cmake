@@ -25,3 +25,5 @@ target_link_libraries(unit_tests
         anson
         gtest_main
 )
+
+target_compile_options(unit_tests PRIVATE /showIncludes)

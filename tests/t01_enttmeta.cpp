@@ -1,3 +1,8 @@
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN     // excludes OLE/COM/RPC stuff → no rpcndr.h
+#define NOMINMAX                // prevents min/max macro clashes
+#endif
+
 #include <gtest/gtest.h>
 #include <entt/meta/meta.hpp>
 #include <entt/meta/factory.hpp>
@@ -20,9 +25,9 @@ TEST(ANCLIENT, PING) {
     register_meta(enums);
     register_semantier(enums);
 
-    OnError errctx = []() {
-
+    OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
     };
 
-    Clients::pingLess("Anson.cmake/test", errctx);
+    Clients::setup(JProtocol{""});
+    Clients::pingLess("Anson.cmake/test", "TEST(ANCLIENT) ping...", errctx);
 }

@@ -8,31 +8,31 @@ namespace anson {
 class ShareFlag : public JavaEnum {
 public:
     /** Kept as private file ('🔒') at private node. */
-    static inline const string prv = "🔒";
+    static inline const string prv = "A"; //R"("🔒")";
 
     /**
      * To be pushed (shared) to hub ('⇈')
      * @deprecated confusing with synchronizing state.
      */
-    static inline const string pushing = "⇈";
+    static inline const string pushing = "B"; // R"("⇈")";
 
     /** synchronized (shared) with a synode ('🌎') */
-    static inline const string publish = "🌎";
+    static inline const string publish = "C"; // R"("🌎")";
 
     /**created at a device (client) node ('📱') */
-    static inline const string device = "📱";
+    static inline const string device = "D"; // R"("📱")";
 
     /**
      * The doc is locally removed, and the task is waiting to push to a synode ('Ⓛ')
      * @deprecated confusing with synchronizing state.
      */
-    static inline const string loc_remove = "Ⓛ";
+    static inline const string loc_remove = "E"; // R"("Ⓛ")";
 
     /** what's this for ? */
-    static inline const string deny = "⛔";
+    static inline const string deny = "F"; // R"("⛔")";
 
     /** what's this for ? */
-    static inline const string unknown = "⚠";
+    static inline const string unknown = "F"; // R"("⚠")";
 
     // ShareFlag(string& f) : JavaConsts(f) {}
 

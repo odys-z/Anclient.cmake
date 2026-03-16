@@ -84,21 +84,21 @@ inline void register_semantier(map<string, map<string, int>*>& enum_vals) {
         ;
 
     {
-        ShareFlag::decode["prv"] = "🔒";
-        ShareFlag::decode["pushing"] = "⇈";
-        ShareFlag::decode["publish"] = "🌎";
-        ShareFlag::decode["device"] = "📱";
-        ShareFlag::decode["loc_remove"] = "Ⓛ";
-        ShareFlag::decode["deny"] = "⛔";
-        ShareFlag::decode["unknown"] = "⚠";
+        // ShareFlag::decode["prv"] = R"(🔒)";
+        // ShareFlag::decode["pushing"] = R"(⇈)";
+        // ShareFlag::decode["publish"] = R"(🌎)";
+        // ShareFlag::decode["device"] = R"(📱)";
+        // ShareFlag::decode["loc_remove"] = R"(Ⓛ)";
+        // ShareFlag::decode["deny"] = R"(⛔)";
+        // ShareFlag::decode["unknown"] = R"(⚠)";
 
-        ShareFlag::encode["🔒"] = "prv";
-        ShareFlag::encode["⇈"] = "pushing";
-        ShareFlag::encode["🌎"] = "publish";
-        ShareFlag::encode["📱"] = "device";
-        ShareFlag::encode["Ⓛ"] = "loc_remove";
-        ShareFlag::encode["⛔"] = "deny";
-        ShareFlag::encode["⚠"] = "unknown";
+        // ShareFlag::encode[R"(🔒)"] = "prv";
+        // ShareFlag::encode[R"(⇈)"] = "pushing";
+        // ShareFlag::encode[R"(🌎)"] = "publish";
+        // ShareFlag::encode[R"(📱)"] = "device";
+        // ShareFlag::encode[R"(Ⓛ)"] = "loc_remove";
+        // ShareFlag::encode[R"(⛔)"] = "deny";
+        // ShareFlag::encode[R"(⚠)"] = "unknown";
     }
 }
 }

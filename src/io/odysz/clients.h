@@ -2,25 +2,63 @@
 
 #include <functional>
 #include <string>
+#include <cpr/cpr.h>
 
-#include "semantier.h"
+#include <io/odysz/jprotocol.h>
+
 // #include "io/odysz/semantic/tier/docs.h"
 
-using namespace std;
+using namespace cpr;
 
 namespace anson {
 
 class SessionClient {
 
 public:
-    string jservrt;
+    JServUrl jserv;
 
-    SessionClient(string jserv) : jservrt(jserv) {
-    }
+    SessionClient(string jserv) : jserv(jserv) { }
 
     template<typename R>
     AnsonResp commit(AnsonMsg<R> req, OnError err) {
+        std::stringstream ss;
+        JsonOpt opt;
+        req.toBlock(ss, opt);
+
+        stringstream ssview = std::move(ss);
+
+        andebug(jserv.jserv());
+        andebug(ss.view());
+
+        cpr::Response r = cpr::Post(
+            cpr::Url{jserv.jserv()},
+            cpr::Body{std::move(ssview.str())},
+            cpr::Header{{"Content-Type", "application/json"}}
+        );
+
         AnsonResp resp;
+
+        if (r.status_code == 201) { // 201 is 'Created'
+            std::cout << "Success!" << std::endl;
+            std::cout << "Response from server: " << r.text << std::endl;
+
+            EnTTSaxParser<AnsonResp> handler(resp);
+            bool result = nlohmann::json::sax_parse(r.text, &handler);
+
+            if (!result) {
+                resp.Code(MsgCode::exGeneral)
+                    .msg("Parsing response failed: " + r.text);
+                vector<string_view> args;
+                err(MsgCode::exGeneral, r.error.message, args);
+            }
+        } else {
+            std::cerr << "Error: " << r.status_code << " - " << r.error.message << std::endl;
+            resp.Code(MsgCode::exIo)
+                .msg(r.error.message);
+            vector<string_view> args;
+            err(MsgCode::exIo, string_view(r.error.message), args);
+        }
+
         return resp;
     }
 };
@@ -30,16 +68,20 @@ public:
     InsecureClient(string jserv) : SessionClient(jserv) {}
 };
 
-/**
- * TODO move to a stand alone protocol tier?
- * JProtocol.OnProgress
- */
-using OnProgress = std::function<void(const string& path, std::string status)>;
-
 class Clients {
-public:
+    static JProtocol protocol;
 
-    inline static AnsonResp pingLess(JProtocol& protocol, string uri, string msg, OnError err) {
+public:
+    inline static OnError err = [] (MsgCode c, string_view m, vector<string_view> args) {
+        anerror(format("code: {}, msg:\n{}", int(c), m));
+        anerror(args);
+    };
+
+    inline static void setup(JProtocol p) {
+        protocol = p;
+    }
+
+    inline static AnsonResp pingLess(string uri, string msg, OnError err=Clients::err) {
         EchoReq req;
         req.echo = msg;
         #ifdef ANCLIENT_BUILD_TESTS
@@ -52,7 +94,7 @@ public:
         cout << "[Clinet.pingLess Msg] " << reqs.c_str();
         #endif
 
-        InsecureClient client{protocol.prtocolpath};
+        InsecureClient client{protocol.protocolpath};
         return client.commit(anmsg, err);
     }
 };

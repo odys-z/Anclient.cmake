@@ -10,20 +10,34 @@ FetchContent_MakeAvailable(googletest)
 
 include(GoogleTest)
 
-add_executable(unit_tests
-  # semantier.h
-  t01_enttmeta.cpp
-  # t02_deserialize.cpp
+add_executable(anclient_tests
+  t01_anclient_tests.cpp
+  expect/jserv.hpp
+)
+
+add_custom_command(TARGET anclient_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/ast-cpy"
+        "$<TARGET_FILE_DIR:anclient_tests>/ast-cpy"
+
+    COMMENT "Copying JSON settings to build directory"
 )
 
 find_package(nlohmann_json CONFIG REQUIRED)
 
-target_link_libraries(unit_tests 
+target_link_libraries(anclient_tests
     PRIVATE 
         nlohmann_json::nlohmann_json
         cpr::cpr
         anson
+        anclient
         gtest_main
 )
 
-target_compile_options(unit_tests PRIVATE /showIncludes)
+target_compile_options(anclient_tests PRIVATE /showIncludes)
+
+add_compile_definitions(ANSON_VERBOSE=4)
+
+if(MSVC)
+    target_compile_options(anclient_tests PRIVATE "/bigobj")
+endif()

@@ -4,7 +4,9 @@
 #include <string>
 #include <cpr/cpr.h>
 
+#include <io/odysz/reflect.h>
 #include <io/odysz/jprotocol.h>
+#include <io/odysz/semantier.h>
 
 // #include "io/odysz/semantic/tier/docs.h"
 
@@ -17,85 +19,105 @@ class SessionClient {
 public:
     JServUrl jserv;
 
-    SessionClient(string jserv) : jserv(jserv) { }
+    SessionClient(const JServUrl &jserv) : jserv(jserv) { }
 
     template<typename R>
-    AnsonResp commit(AnsonMsg<R> req, OnError err) {
+    AnsonResp& commit(AnsonResp &rep, AnsonMsg<R> &req, OnError err) {
         std::stringstream ss;
-        JsonOpt opt;
-        req.toBlock(ss, opt);
+        req.toBlock(ss, *IJsonable::contxt_ptr);
 
         stringstream ssview = std::move(ss);
 
-        andebug(jserv.jserv());
+        string url{std::format("{}/{}", jserv.jserv(), req.port.url())};
+        anlog(url);
         andebug(ss.view());
 
         cpr::Response r = cpr::Post(
-            cpr::Url{jserv.jserv()},
+            cpr::Url{url},
+            cpr::Proxies{{"https", ""}, {"http", ""}},
+            cpr::Verbose{true},
             cpr::Body{std::move(ssview.str())},
-            cpr::Header{{"Content-Type", "application/json"}}
+            cpr::Header{{"Content-Type", "application/json"},
+            {"User-Agent", "Mozilla/5.0 (Anclient.cmake)"}}
         );
 
-        AnsonResp resp;
+        // AnsonResp resp;
+        AnsonMsg<AnsonResp> resp;
+        resp.Body(rep);
 
-        if (r.status_code == 201) { // 201 is 'Created'
+        if (r.status_code == 201 || r.status_code == 200) { // 201 is 'Created'
             std::cout << "Success!" << std::endl;
             std::cout << "Response from server: " << r.text << std::endl;
 
-            EnTTSaxParser<AnsonResp> handler(resp);
-            bool result = nlohmann::json::sax_parse(r.text, &handler);
+            // EnTTSaxParser<AnsonResp> handler(resp);
+            // bool result = nlohmann::json::sax_parse(r.text, &handler);
+            bool result = Anson::from_json(r.text, resp);
 
             if (!result) {
-                resp.Code(MsgCode::exGeneral)
-                    .msg("Parsing response failed: " + r.text);
+                resp.Code(MsgCode::Code::exGeneral);
+                // resp.body[0]->msg("Parsing response failed: " + r.text);
+                AnsonResp *bd = new AnsonResp{};
+                bd->msg("Parsing response failed: " + r.text);
+                resp.Body(*bd);
                 vector<string_view> args;
-                err(MsgCode::exGeneral, r.error.message, args);
+                err(MsgCode::Code::exGeneral, r.error.message, args);
             }
         } else {
-            std::cerr << "Error: " << r.status_code << " - " << r.error.message << std::endl;
-            resp.Code(MsgCode::exIo)
-                .msg(r.error.message);
+            std::cerr << "Error - Clients::commit(): " << r.status_code << " - " << r.error.message << std::endl;
+            resp.Code(MsgCode::Code::exIo);
+            // resp.body[0]->msg(r.error.message);
+            AnsonResp *bd = new AnsonResp{};
+            bd->msg(r.error.message);
+            resp.Body(*bd);
             vector<string_view> args;
-            err(MsgCode::exIo, string_view(r.error.message), args);
+            err(MsgCode::Code::exIo, string_view(r.error.message), args);
         }
 
-        return resp;
+        // return resp.Body();
+        return rep;
     }
 };
 
 class InsecureClient : public SessionClient {
 public:
-    InsecureClient(string jserv) : SessionClient(jserv) {}
+    InsecureClient(const JServUrl &jserv) : SessionClient(jserv) {}
 };
 
 class Clients {
-    static JProtocol protocol;
+    inline static JProtocol protocol;
 
 public:
     inline static OnError err = [] (MsgCode c, string_view m, vector<string_view> args) {
-        anerror(format("code: {}, msg:\n{}", int(c), m));
+        anerror(format("code: {}, msg:\n{}", AnsonJavaEnumAst::name<MsgCode>(c), m));
         anerror(args);
     };
 
-    inline static void setup(JProtocol p) {
-        protocol = p;
-    }
+    // inline static void setup(JProtocol p) {
+    //     protocol = p;
+    // }
 
-    inline static AnsonResp pingLess(string uri, string msg, OnError err=Clients::err) {
+    /**
+     * @brief pingLess Ping without session.
+     * @param jsert jserv-root, this is required since java 1.5.17, for instance-wise referencing.
+     * @param uri
+     * @param msg
+     * @param err
+     * @return response
+     */
+    inline static AnsonResp pingLess(AnsonResp resp, const JServUrl &jserv,
+            const string &uri, const string &msg, OnError err=Clients::err) {
+
         EchoReq req;
         req.echo = msg;
-        #ifdef ANCLIENT_BUILD_TESTS
-        cout << "[Clinets.pingLess.body] " << req.toString();
-        #endif
+        anlog("[Clinet.pingLess.body] "s + req.toBlock());
 
         AnsonMsg<EchoReq> anmsg(Port(Port::echo), req);
-        // string reqs = anmsg.toBlock<AnsonMsg<EchoReq>>();
-        #ifdef ANCLIENT_BUILD_TESTS
-        cout << "[Clinet.pingLess Msg] " << reqs.c_str();
-        #endif
 
-        InsecureClient client{protocol.protocolpath};
-        return client.commit(anmsg, err);
+        // string reqs = anmsg.toBlock<AnsonMsg<EchoReq>>();
+        anlog(std::format("[Clinet.pingLess Msg] port {} [{}]", anmsg.port.valof(), anmsg.port.url()));
+
+        InsecureClient client{jserv};
+        return client.commit(resp, anmsg, err);
     }
 };
 

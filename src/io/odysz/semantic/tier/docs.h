@@ -5,7 +5,7 @@
 
 namespace anson {
 // class ShareFlag : public IJsonable, public JavaConsts<string> {
-class ShareFlag : public JavaEnum {
+class ShareFlag : public IJsonable {
 public:
     /** Kept as private file ('🔒') at private node. */
     static inline const string prv = "A"; //R"("🔒")";
@@ -34,21 +34,24 @@ public:
     /** what's this for ? */
     static inline const string unknown = "F"; // R"("⚠")";
 
-    // ShareFlag(string& f) : JavaConsts(f) {}
+    string v;
 
-    // IJsonable* toBlock(ostream& stream, JsonOpt& opts) override {
-    //     stream.put('\"');
-    //     stream.write(name().c_str(), name().size());
-    //     stream.put('\"');
-    //     return this;
-    // }
+    ShareFlag(string& f) : IJsonable("") , v(f) {}
 
-    // IJsonable* toJson(string& buf) override {
-    //     buf += '\"';
-    //     buf += name();
-    //     buf += '\"';
-    //     return this;
-    // }
+    string toBlock(JsonOpt& opts) override {
+        // stream.put('\"');
+        // stream.write(name().c_str(), name().size());
+        // stream.put('\"');
+        // return this;
+        return {'"' + v + '"'};
+    }
+
+    IJsonable* toJson(string& buf) override {
+        buf += '\"';
+        buf += v;
+        buf += '\"';
+        return this;
+    }
 };
 
 }

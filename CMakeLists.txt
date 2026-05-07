@@ -5,7 +5,11 @@ cmake_minimum_required(VERSION 3.30)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 set(VCPKG_INSTALLED_DIR "${CMAKE_SOURCE_DIR}/../vcpkg/installed" CACHE PATH "vcpkg install dir")
 
-project(anclient.cmake LANGUAGES CXX)
+project(anclient.cmake
+    VERSION 0.1.0
+    DESCRIPTION "The cpp peer of Anclient.java"
+    HOMEPAGE_URL "https://github.com/odys-z/Anclient.cmake"
+    LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,7 +22,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # see ping.cpp
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 
 message(STATUS "=========================================== CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
 message(STATUS "=========================================== CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -46,7 +49,6 @@ FetchContent_Declare(
   GIT_TAG f091b2c061b307ee89b164c39976fc9202a1c79d) # 1.14.2 @ https://github.com/libcpr/cpr/releases
 
 FetchContent_MakeAvailable(cpr)
-
 
 FetchContent_Declare(
   googletest

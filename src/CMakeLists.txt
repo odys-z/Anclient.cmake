@@ -10,7 +10,7 @@ add_library(anclient INTERFACE
     io/odysz/clients.h
     io/odysz/semantier.h
     io/odysz/semantic/tier/docs.h
-    io/odysz/semantic/json.expect.h
+    # io/odysz/semantic/json.expect.h
     io/oz/anclient/socketier.h
 )
 

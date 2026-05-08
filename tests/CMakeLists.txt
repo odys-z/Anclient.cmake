@@ -12,7 +12,7 @@ include(GoogleTest)
 
 add_executable(anclient_tests
   t01_anclient_tests.cpp
-  expect/jserv.hpp
+
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD

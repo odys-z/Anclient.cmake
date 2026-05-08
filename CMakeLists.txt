@@ -57,6 +57,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+add_compile_options(/utf-8)
+
 # before src
 option(ANCLIENT_BUILD_TESTS "Build tests for Anclient.cmake" ON)
 add_subdirectory(src)

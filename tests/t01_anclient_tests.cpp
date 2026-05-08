@@ -10,9 +10,10 @@
 
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
+#include <gen/jserv.hpp>
+
 #include "io/odysz/semantier.h"
 #include "io/odysz/clients.h"
-#include "expect/jserv.hpp"
 
 using namespace std;
 using namespace std;
@@ -25,6 +26,28 @@ TEST(ANCLIENT, PING) {
     JsonOpt opts{&enums};
     register_jserv(enums, opts);
     load_echoAst_ext(enums);
+    // load_ansessionreqAst(enums, "ast-cpy/session-req.ast.json");
+    // load_ansessionrespAst(enums, "ast-cpy/session-resp.ast.json");
+
+
+    OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
+        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    };
+
+    JProtocol j{"jserv-sample"};
+    JServUrl jserv{"http://127.0.0.1:8080", j};
+
+    Clients::if_verbose = true;
+    AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);
+
+    ASSERT_EQ("TEST Echo...", resp.m);
+}
+
+TEST(ANCLIENT, AnSESSION) {
+    AstMap enums;
+    JsonOpt opts{&enums};
+    register_jserv(enums, opts);
+    load_echoAst_ext(enums);
     load_ansessionreqAst(enums, "ast-cpy/session-req.ast.json");
     load_ansessionrespAst(enums, "ast-cpy/session-resp.ast.json");
 
@@ -33,11 +56,10 @@ TEST(ANCLIENT, PING) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
-    // Clients::setup(JProtocol{"jserv-album"});
-    JProtocol j{"jserv-album"};
-    JServUrl jserv{"http://127.0.0.1:8961", j};
-    AnsonResp resp;
-    Clients::pingLess(resp, jserv, "Anson.cmake/test", "TEST(ANCLIENT) ping...", errctx);
+    JProtocol j{"jserv-sample"};
+    JServUrl jserv{"http://127.0.0.1:8080", j};
 
-    ASSERT_EQ("", resp.m);
+    SessionClient *c = SessionClient::loginWithUri(jserv, "anclient.cmake", "ody", "123456", "cpp", errctx);
+
+    ASSERT_EQ("ody", c->ssInf.uid);
 }

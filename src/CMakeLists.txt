@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(anclient INTERFACE
+    gen/jserv.hpp
     io/odysz/clients.h
     io/odysz/semantier.h
     io/odysz/semantic/tier/docs.h

@@ -29,7 +29,6 @@ target_link_libraries(anclient_tests
     PRIVATE 
         nlohmann_json::nlohmann_json
         cpr::cpr
-        Botan::botan
         anson
         anclient
         gtest_main

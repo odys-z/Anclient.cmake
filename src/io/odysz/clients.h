@@ -39,7 +39,9 @@ public:
             cpr::Proxies{{"https", ""}, {"http", ""}},
             cpr::Verbose{if_verbose},
             cpr::Body{std::move(ssview.str())},
-            cpr::Header{{"Content-Type", "application/json"},
+            cpr::Header{
+                        {"Content-Type", "html/text"},
+                        {"Content-Type", "application/json"},
             {"User-Agent", "Mozilla/5.0 (Anclient.cmake)"}}
         );
 
@@ -51,15 +53,22 @@ public:
 
             bool result = Anson::from_json(r.text, *resp);
 
+            vector<string_view> err_args;
             if (!result) {
                 resp->Code(MsgCode::Code::exGeneral);
+                if(resp->body_size() == 0)
+                    resp->Body(Rp()); // managed by shared_ptr
                 resp->body[0]->msg("Parsing response failed: " + r.text);
-                vector<string_view> args;
-                err(MsgCode::Code::exGeneral, r.error.message, args);
+                err(MsgCode::Code::exGeneral, r.error.message, err_args);
+            }
+            else if (resp->code != MsgCode::Code::ok) {
+                err(resp->code, {resp->body.at(0)->m}, err_args);
             }
         } else {
             std::cerr << "Error - Clients::commit(): " << r.status_code << " - " << r.error.message << std::endl;
             resp->Code(MsgCode::Code::exIo);
+            if(resp->body_size() == 0)
+                resp->Body(Rp());
             resp->body[0]->msg(r.error.message);
             vector<string_view> args;
             err(MsgCode::Code::exIo, string_view(r.error.message), args);
@@ -127,7 +136,7 @@ SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string u
     AnSessionReq req{};
     format_sessionReq(req, uid, pswd, device);
 
-    AnsonMsg<AnSessionReq> msg{};
+    AnsonMsg<AnSessionReq> msg{Port::session};
     msg.Body(req);
 
     AnSessionResp &rply = SessionClient::commit<AnSessionReq, AnSessionResp>(jserv, msg, err);
@@ -138,11 +147,14 @@ SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string u
     return client;
 }
 
-
-void SessionClient::format_sessionReq(AnSessionReq &req, const string uid, const string & pswd, const string &device) {
+void SessionClient::format_sessionReq(AnSessionReq &req, const string uid,
+                    const string & pswd, const string &device) {
     req.a = AnSessionReq::A::login;
     req.uid = uid;
-    req.pswd = pswd;
+
+    vector<unsigned char>iv = AESHelper2::getRandom();
+    req.token = AESHelper2::encrypt(uid, pswd, iv);
+    req.iv = AESHelper2::encode64(iv);
     req.deviceId = device;
 }
 

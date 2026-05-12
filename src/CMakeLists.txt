@@ -31,6 +31,7 @@ target_include_directories(anson INTERFACE
 )
 
 target_link_libraries(anson INTERFACE
+    OpenSSL::Crypto OpenSSL::SSL
     EnTT::EnTT
     nlohmann_json::nlohmann_json
     cpr::cpr

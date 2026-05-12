@@ -11,8 +11,8 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 add_executable(anclient_tests
+    # t01_common.cpp
     t02_anclient_tests.cpp
-    t01_common.cpp
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD
@@ -27,6 +27,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 target_link_libraries(anclient_tests
     PRIVATE 
+        OpenSSL::Crypto OpenSSL::SSL
         nlohmann_json::nlohmann_json
         cpr::cpr
         anson

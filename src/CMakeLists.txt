@@ -34,6 +34,7 @@ target_link_libraries(anson INTERFACE
     EnTT::EnTT
     nlohmann_json::nlohmann_json
     cpr::cpr
+    Botan::botan
     anson
 )
 

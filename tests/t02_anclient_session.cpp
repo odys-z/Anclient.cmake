@@ -21,27 +21,24 @@ using namespace anson;
 using namespace entt;
 using namespace entt::literals;
 
-// TEST(ANCLIENT, PING) {
-//     AstMap enums;
-//     JsonOpt opts{&enums};
-//     register_jserv(enums, opts);
-//     load_echoAst_ext(enums);
-//     // load_ansessionreqAst(enums, "ast-cpy/session-req.ast.json");
-//     // load_ansessionrespAst(enums, "ast-cpy/session-resp.ast.json");
+TEST(ANCLIENT, PING) {
+    AstMap enums;
+    JsonOpt opts{&enums};
+    register_jserv(enums, opts);
+    load_echoAst_ext(enums);
 
+    OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
+        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    };
 
-//     OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
-//         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
-//     };
+    JProtocol j{"jserv-sample"};
+    JServUrl jserv{"http://127.0.0.1:8080", j};
 
-//     JProtocol j{"jserv-sample"};
-//     JServUrl jserv{"http://127.0.0.1:8080", j};
+    Clients::if_verbose = true;
+    AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);
 
-//     Clients::if_verbose = true;
-//     AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);
-
-//     ASSERT_EQ("TEST Echo...", resp.m);
-// }
+    ASSERT_EQ("TEST Echo...", resp.m);
+}
 
 TEST(ANCLIENT, AnSESSION) {
     AstMap enums;

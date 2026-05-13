@@ -53,7 +53,7 @@ TEST(ANCLIENT, AnSESSION) {
 
 
     OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
-        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+        anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
     JProtocol j{"jserv-sample"};
@@ -62,4 +62,6 @@ TEST(ANCLIENT, AnSESSION) {
     SessionClient *c = SessionClient::loginWithUri(jserv, "anclient.cmake", "ody", "123456", "cpp", errctx);
 
     ASSERT_EQ("ody", c->ssInf.uid);
+    anlog(c->ssInf.ssToken);
+    ASSERT_EQ(2, LangExt::split(c->ssInf.ssToken, ':').size());
 }

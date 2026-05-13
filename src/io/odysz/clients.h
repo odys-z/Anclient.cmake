@@ -134,6 +134,7 @@ SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string u
             const string uid, const string pswd, const string device, OnError err) {
 
     AnSessionReq req{};
+    req.uri = uri;
     format_sessionReq(req, uid, pswd, device);
 
     AnsonMsg<AnSessionReq> msg{Port::session};

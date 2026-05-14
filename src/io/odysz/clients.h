@@ -19,12 +19,15 @@ class SessionClient {
 public:
     JServUrl jserv;
 
+    AnsonHeader header;
+
     SessionInf ssInf;
 
     SessionClient(const JServUrl &jserv) : jserv(jserv) { }
 
-    template<typename R, typename Rp>
-    static Rp& commit(const JServUrl &jserv, AnsonMsg<R> &req, OnError err, bool if_verbose = false) {
+    template<typename Rp, typename R>
+    static Rp& commit(const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool if_verbose = false) {
+
         std::stringstream ss;
         req.toBlock(ss, *IJsonable::contxt_ptr); // FIXME performance problem
 
@@ -77,15 +80,20 @@ public:
         return resp->Body();
     }
 
-    template<typename R, typename Rp>
-    Rp& commit(AnsonMsg<R> &req, OnError err, bool if_verbose = false) {
-        return SessionClient::commit<R, Rp>(jserv, req, err, if_verbose);
+    template<typename Rp, typename R>
+    Rp& commit(AnsonMsg<R> &req, const OnError &err, bool if_verbose = false) {
+        return SessionClient::commit<Rp, R>(jserv, req, err, if_verbose);
     }
 
-    static void format_sessionReq(AnSessionReq &req, const string uid, const string & pswd, const string &device);
+    inline static void format_sessionReq(AnSessionReq &req, const string uid, const string & pswd, const string &device);
 
-    static SessionClient* loginWithUri(const JServUrl &jserv, const string uri,
+    inline static SessionClient* loginWithUri(const JServUrl &jserv, const string uri,
             const string uid, const string pswd, const string device, OnError err);
+
+    template<typename R>
+    R* userReq() {
+        return new R();
+    }
 };
 
 class InsecureClient : public SessionClient {
@@ -126,21 +134,22 @@ public:
         anlog(std::format("[Clinet.pingLess Msg] port {} [{}]", anmsg.port.valof(), anmsg.port.url()));
 
         InsecureClient client{jserv};
-        return client.commit<EchoReq, AnsonResp>(anmsg, err, if_verbose);
+        return client.commit<AnsonResp>(anmsg, err, if_verbose);
     }
 };
 
-SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string uri,
+inline SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string uri,
             const string uid, const string pswd, const string device, OnError err) {
 
     AnSessionReq req{};
     req.uri = uri;
+
     format_sessionReq(req, uid, pswd, device);
 
     AnsonMsg<AnSessionReq> msg{Port::session};
     msg.Body(req);
 
-    AnSessionResp &rply = SessionClient::commit<AnSessionReq, AnSessionResp>(jserv, msg, err);
+    AnSessionResp &rply = SessionClient::commit<AnSessionResp>(jserv, msg, err);
 
     SessionClient* client = new SessionClient{jserv};
     client->ssInf = rply.ssInf;
@@ -148,7 +157,7 @@ SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string u
     return client;
 }
 
-void SessionClient::format_sessionReq(AnSessionReq &req, const string uid,
+inline void SessionClient::format_sessionReq(AnSessionReq &req, const string uid,
                     const string & pswd, const string &device) {
     req.a = AnSessionReq::A::login;
     req.uid = uid;

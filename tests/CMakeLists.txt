@@ -14,7 +14,8 @@ add_executable(anclient_tests
     # t01_common.cpp
     t02_anclient_session.cpp
     t02_doclientier.cpp
-    expect/doctier.hpp
+    io/odysz/semantic/meta.h
+    io/oz/syn/test.h
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD

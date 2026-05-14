@@ -45,6 +45,46 @@ inline static void register_pageinfAst(AstMap & asts) {
         ;
 }
 
+class Device : public anson::Anson {
+public:
+    inline static const std::string _type_ = "io.odysz.semantic.tiers.docs.Device";
+    string id;
+    string synode0;
+    string devname;
+    string toFolder;
+
+    Device() : Anson(_type_)  {};
+
+    Device(string id, string synode0, string devname) : Anson(_type_)  {
+        id = id;
+        synode0 = synode0;
+        devname = devname;
+    };
+};
+
+inline static void register_deviceAst(AstMap & asts) {
+
+    AnsonAst * ast = createAST <Device, AnsonAst> (
+        asts, Anson::_type_, map <string, AnsonField> {
+        {"id", {.dataAnclass="string"} },
+        {"synode0", {.dataAnclass="string"} },
+        {"devname", {.dataAnclass="string"} },
+        {"toFolder", {.dataAnclass="string"} },
+       });
+
+    entt::meta_factory <anson::Device> ()
+        .type(ast->enttypeid)
+        .base<Anson>()
+        .ctor<>()
+        .ctor<string, string, string>()
+
+        .data<&anson::Device::id>("Device")
+        .data<&anson::Device::synode0>("Device")
+        .data<&anson::Device::devname>("Device")
+        .data<&anson::Device::toFolder>("Device")
+        ;
+}
+
 class SynEntity : public anson::AnsonBody {
 public:
     inline static const std::string _type_ = "io.oz.syn.SynEntity";
@@ -55,6 +95,8 @@ public:
     string synode;
     string synoder;
     long nyquence;
+
+    SynEntity() : AnsonBody(_type_)  {};
 
     SynEntity(SynEntityMeta entMeta) : AnsonBody(_type_), entm(entMeta) {};
 
@@ -77,6 +119,7 @@ inline static void register_synentityAst(AstMap & asts) {
     entt::meta_factory <anson::SynEntity> ()
         .type(ast->enttypeid)
         .base<AnsonBody>()
+        .ctor<>()
         .ctor<SynEntityMeta>()
         .ctor<SynEntityMeta, string>()
 
@@ -113,7 +156,7 @@ inline static void register_pathspageAst(AstMap & asts) {
         {"start", {.dataAnclass="int"} },
         {"end", {.dataAnclass="int"} },
         {"clientPaths", {.dataAnclass="map<string, list<VarType"} },
-       });
+      });
 
     entt::meta_factory <anson::PathsPage> ()
         .type(ast->enttypeid)
@@ -146,9 +189,11 @@ public:
     string mime;
     string folder;
 
-    ExpSyncDoc() : SynEntity(_type_)  {};
+    ExpSyncDoc() : SynEntity({}, _type_)  {};
 
     ExpSyncDoc(SynEntityMeta m, string orgId) : SynEntity(m, _type_), org(orgId) {};
+
+    void format(AnResultset rs);
 
     ExpSyncDoc(SynEntityMeta meta, AnResultset rs) : SynEntity(meta, _type_)  {
         format(rs);
@@ -227,12 +272,14 @@ public:
     vector<string> deletings;
     string stamp;
     PathsPage syncingPage;
-    string device;
+    Device device;
     vector<ExpSyncDoc> syncQueries;
     int blockSeq;
     string org;
     bool reset;
     int limit;
+
+    void format(IFileDescriptor p);
 
     DocsReq(AnsonMsg<AnsonBody> parent, string uri, IFileDescriptor p) : UserReq(uri, _type_)  {
         format(p);
@@ -257,8 +304,8 @@ inline static void load_docsreqAst(AstMap &asts, const string &ast_path) {
         entf.data<&DocsReq::org>("org");
         entf.data<&DocsReq::reset>("reset");
         entf.data<&DocsReq::limit>("limit");
-        .ctor<AnsonMsg<AnsonBody>, string, IFileDescriptor>()
-        .ctor<string, ExpSyncDoc, string>()
+        entf.ctor<AnsonMsg<AnsonBody>, string, IFileDescriptor>();
+        entf.ctor<string, ExpSyncDoc, string>();
 
         //
         ast->get_field_instance = [ast](const IJsonable& ans, const string& fieldname) -> meta_any {
@@ -311,8 +358,8 @@ public:
     };
     ExpSyncDoc xdoc;
     string docTabl;
-    PathsPage pathsPage;
-    string string;
+    PathsPage syncingPage;
+    string collectId;
     int blockSeqReply;
     string org;
     string device;
@@ -325,8 +372,8 @@ inline static void load_docsrespAst(AstMap &asts, const string &ast_path) {
       [](meta_factory<DocsResp> &entf, AnsonBodyAst *ast) {
         entf.data<&DocsResp::xdoc>("xdoc");
         entf.data<&DocsResp::docTabl>("docTabl");
-        entf.data<&DocsResp::pathsPage>("pathsPage");
-        entf.data<&DocsResp::string>("string");
+        entf.data<&DocsResp::syncingPage>("syncingPage");
+        entf.data<&DocsResp::collectId>("collectId");
         entf.data<&DocsResp::blockSeqReply>("blockSeqReply");
         entf.data<&DocsResp::org>("org");
         entf.data<&DocsResp::device>("device");
@@ -341,10 +388,10 @@ inline static void load_docsrespAst(AstMap &asts, const string &ast_path) {
                     return entt::forward_as_meta(concrete.xdoc);
                 if ("docTabl" == fieldname)
                     return entt::forward_as_meta(concrete.docTabl);
-                if ("pathsPage" == fieldname)
-                    return entt::forward_as_meta(concrete.pathsPage);
-                if ("string" == fieldname)
-                    return entt::forward_as_meta(concrete.string);
+                if ("syncingPage" == fieldname)
+                    return entt::forward_as_meta(concrete.syncingPage);
+                if ("collectId" == fieldname)
+                    return entt::forward_as_meta(concrete.collectId);
                 if ("blockSeqReply" == fieldname)
                     return entt::forward_as_meta(concrete.blockSeqReply);
                 if ("org" == fieldname)

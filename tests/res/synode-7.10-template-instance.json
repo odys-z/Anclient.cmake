@@ -1,0 +1,9 @@
+{ "type": "io.oz.syn.TestSettings",
+  "jserv": "http://localhost:port/jserv-album",
+  "domain": "domain id",
+  "admin": "admin",
+  "domain_token": "************",
+
+  "regiserv": "http://host:port/regist-alpha",
+  "centralPswd": "************"
+}

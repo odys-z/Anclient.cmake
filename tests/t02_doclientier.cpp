@@ -63,13 +63,17 @@ TEST(Syncpage, Query) {
     load_ansessionreqAst(asts, "ast-cpy/session-req.ast.json");
     load_ansessionrespAst(asts, "ast-cpy/session-resp.ast.json");
 
-    PhotoMeta phm{"conn: unknown"};
-    JProtocol jprotocol;
-    JServUrl jserv{"http://127.0.0.1:8080/jserv-album", jprotocol};
-    OnError onErr;
-
     TestSettings settings;
-    bool result = Anson::from_file("", settings);
+    bool result = Anson::from_file("settings/synode-7.10-reddish-instance.json", settings);
+
+    PhotoMeta phm{"opaque to client"};
+    JProtocol jprotocol;
+    JServUrl jserv{settings.jserv, jprotocol};
+
+    OnError onErr = [](MsgCode c, string_view e, vector<string_view> &a) {
+        anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    };
+
     Doclientier doclient{phm.tbl, jserv, onErr};
 
     verifyPathsPage(doclient, phm.tbl, {});

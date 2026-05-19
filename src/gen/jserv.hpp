@@ -67,15 +67,18 @@ public:
     SessionInf ssInf;
     Anson profile;
 
-    AnSessionResp(string ssid, string uid, string roleId) : AnsonResp(_type_)  {
+    AnSessionResp(string ssid, string uid, string roleId) : AnsonResp("")  {
+        Type(_type_);
         ssInf.ssid = ssid;
         ssInf.uid = uid;
         ssInf.roleId = roleId;
     };
 
-    AnSessionResp(SessionInf ss_inf) : AnsonResp(_type_), ssInf(ss_inf) {};
+    AnSessionResp(SessionInf ss_inf) : AnsonResp(""), ssInf(ss_inf) {
+        Type(_type_);
+    };
 
-    AnSessionResp() : AnsonResp("", _type_)  {};
+    AnSessionResp() : AnSessionResp("", "", "")  {};
 };
 
 inline static void load_ansessionrespAst(AstMap &asts, const string &ast_path) {

@@ -41,7 +41,7 @@ public:
         req.uri = sysuri;
         req.synuri = synuri;
         req.syncingPage = page;
-        req.device = Device{page.device, "anclient.cmake test", "Ody@test"};
+        req.device = Device{page.device, "synode anclient.cmake test", "Ody@test"};
         req.a = DocsReq::A::selectSyncs;
 
         AnsonMsg<DocsReq> q;

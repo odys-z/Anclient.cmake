@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gen/stubtypes.h>
+#include <io/odysz/dbmeta.h>
 
 namespace anson {
 

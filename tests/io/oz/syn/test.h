@@ -26,8 +26,8 @@ public:
 
     string centralPswd;
 
-    TestSettings() {}
+    TestSettings() { Type(_type_); }
 
-    TestSettings(const string &jserv) : jserv(jserv) {}
+    // TestSettings(const string &jserv) : jserv(jserv) {}
 };
 }

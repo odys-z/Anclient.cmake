@@ -24,7 +24,9 @@ public:
     string iv;
     string deviceId;
 
-    AnSessionReq() : AnsonBody(_type_)  {};
+    AnSessionReq() : AnsonBody() {
+        Type(_type_);
+    };
 };
 
 inline static void load_ansessionreqAst(AstMap &asts, const string &ast_path) {

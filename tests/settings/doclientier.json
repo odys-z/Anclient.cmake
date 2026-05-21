@@ -1,10 +1,10 @@
 { "type"       : "io.odysz.reflect.PeerSettings",
   "ansonMsg"   : "io.odysz.semantic.jprotocol.AnsonMsg",
-  "ansons"     : [],
-  "scopeEnums" : ["io.odysz.semantic.jprotocol.MsgCode"],
-  "javaEnums"  : ["io.odysz.semantic.jprotocol.Port"],
+  "ansons"     : ["ast-cpy/test-settings.ast.json"],
+  "scopeEnums" : [],
+  "javaEnums"  : [],
   "ansonBody"  : "io.odysz.semantic.jprotocol.AnsonBody",
   "anRequests" : [],
-  "cpp_include": ["gen/stubtypes.h"],
-  "cpp_gen"    : "test/gen/t_03_synode.hpp"
+  "cpp_include": [],
+  "cpp_gen"    : "test/io/oz/syn/test_gen.hpp"
 }

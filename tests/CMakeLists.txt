@@ -11,8 +11,7 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 add_executable(anclient_tests
-    # t01_common.cpp
-    t02_anclient_session.cpp
+    # t02_anclient_session.cpp
     t02_doclientier.cpp
     io/odysz/semantic/meta.h
     io/oz/syn/test.h
@@ -21,7 +20,11 @@ add_executable(anclient_tests
 add_custom_command(TARGET anclient_tests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/ast-cpy"
-        "$<TARGET_FILE_DIR:anclient_tests>/ast-cpy"
+        "$<TARGET_FILE_DIR:anclient_tests>/ast"
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/settings"
+        "$<TARGET_FILE_DIR:anclient_tests>/settings"
 
     COMMENT "Copying JSON settings to build directory"
 )

@@ -27,7 +27,7 @@ using namespace entt;
 using namespace entt::literals;
 
 namespace anson {
-void DocsReq::format(IFileDescriptor p) {
+void DocsReq::format(const IFileDescriptor& p) {
     device = Device({}, {}, p.device);
     doc.device = p.device;
     doc.clientpath = p.fullpath();
@@ -55,13 +55,22 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
 }
 }
 
+void ExpSyncDoc::format(const AnResultset & rs) {
+
+}
+
+void DocsReq::format(const IFileDescriptor &, const string) {}
+
+
 TEST(Syncpage, Query) {
 
     AstMap asts;
     JsonOpt opts{&asts};
     register_jserv(asts, opts);
-    load_ansessionreqAst(asts, "ast-cpy/session-req.ast.json");
-    load_ansessionrespAst(asts, "ast-cpy/session-resp.ast.json");
+    // load_ansessionreqAst(asts, "ast-cpy/session-req.ast.json");
+    // load_ansessionrespAst(asts, "ast-cpy/session-resp.ast.json");
+    register_doctier(asts, ".");
+    register_testsettingsAst(asts);
 
     TestSettings settings;
     bool result = Anson::from_file("settings/synode-7.10-reddish-instance.json", settings);

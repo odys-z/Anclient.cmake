@@ -1,6 +1,5 @@
 #pragma once
 
-#include "io/oz/syn/test.h"
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN     // excludes OLE/COM/RPC stuff → no rpcndr.h
 #define NOMINMAX                // prevents min/max macro clashes
@@ -19,6 +18,7 @@
 #include "io/odysz/jclient/syn.h"
 #include "gen/doctier.hpp"
 #include "io/odysz/semantic/meta.h"
+#include "io/oz/syn/test_gen.hpp"
 
 using namespace std;
 using namespace std;
@@ -69,7 +69,7 @@ TEST(Syncpage, Query) {
     register_jserv(asts, opts);
     // load_ansessionreqAst(asts, "ast-cpy/session-req.ast.json");
     // load_ansessionrespAst(asts, "ast-cpy/session-resp.ast.json");
-    register_doctier(asts, ".");
+    register_doctier(asts, "./");
     register_testsettingsAst(asts);
 
     TestSettings settings;

@@ -44,7 +44,7 @@ if(ANCLIENT_BUILD_TESTS)
     add_executable(
         anclient_clangd_helper
         dev/ping.cpp
-        io/odysz/semantic/json.expect.h
+        # io/odysz/semantic/json.expect.h
         io/odysz/jclient/syn.h
     )
     target_link_libraries(anclient_clangd_helper PRIVATE anson)

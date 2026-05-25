@@ -14,12 +14,13 @@ add_executable(anclient_tests
     # t02_anclient_session.cpp
     t02_doclientier.cpp
     io/odysz/semantic/meta.h
-    io/oz/syn/test.h
+    # io/oz/syn/test.h
+    io/oz/syn/test_gen.hpp
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/ast-cpy"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ast"
         "$<TARGET_FILE_DIR:anclient_tests>/ast"
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory

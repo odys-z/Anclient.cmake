@@ -43,9 +43,9 @@ public:
             cpr::Verbose{if_verbose},
             cpr::Body{std::move(ssview.str())},
             cpr::Header{
-                        {"Content-Type", "html/text"},
-                        {"Content-Type", "application/json"},
-            {"User-Agent", "Mozilla/5.0 (Anclient.cmake)"}}
+                {"Content-Type", "html/text"},
+                {"Content-Type", "application/json"},
+                {"User-Agent", "Mozilla/5.0 (Anclient.cmake)"}}
         );
 
         AnsonMsg<Rp> *resp = new AnsonMsg<Rp>{};

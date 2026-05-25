@@ -46,7 +46,7 @@ public:
         return {'"' + v + '"'};
     }
 
-    IJsonable* toJson(string& buf) override {
+    IJsonable* toJson(string& buf) {
         buf += '\"';
         buf += v;
         buf += '\"';

@@ -44,11 +44,11 @@ public:
         req.device = Device{page.device, "synode anclient.cmake test", "Ody@test"};
         req.a = DocsReq::A::selectSyncs;
 
-        AnsonMsg<DocsReq> q;
+        AnsonMsg<DocsReq> q{Port::docstier};
         q.Body(req);
         q.Header(header);
 
-        DocsResp resp = client.commit<DocsResp>(q, err);
+        DocsResp resp = client.commit<DocsResp>(q, err, true);
 
         return resp;
     }

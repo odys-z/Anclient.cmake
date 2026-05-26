@@ -26,7 +26,7 @@ public:
     SessionClient(const JServUrl &jserv) : jserv(jserv) { }
 
     template<typename Rp, typename R>
-    static Rp& commit(const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool if_verbose = false) {
+    static Rp& commit(const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
 
         std::stringstream ss;
         req.toBlock(ss, *IJsonable::contxt_ptr); // FIXME performance problem
@@ -35,12 +35,15 @@ public:
 
         string url{std::format("{}/{}", jserv.jserv(), req.port.url())};
         anlog(url);
-        andebug(ss.view());
+        if(verbose)
+            anlog(ssview.view());
+        else
+            andebug(ssview.view());
 
         cpr::Response r = cpr::Post(
             cpr::Url{url},
             cpr::Proxies{{"https", ""}, {"http", ""}},
-            cpr::Verbose{if_verbose},
+            cpr::Verbose{verbose},
             cpr::Body{std::move(ssview.str())},
             cpr::Header{
                 {"Content-Type", "html/text"},

@@ -1,4 +1,5 @@
 { "type": "io.oz.syn.TestSettings",
+  "protocolpath": "jserv-album",
   "jserv": "http://localhost:port/jserv-album",
   "domain": "domain id",
   "admin": "admin",

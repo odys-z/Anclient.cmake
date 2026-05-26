@@ -3,6 +3,7 @@
   "baseAnclass": "io.odysz.anson.Anson",
   "fields" : {
     "jserv": {"dataAnclass": "string"},
+    "protocolpath": {"dataAnclass": "string"},
     "readonly": {"dataAnclass": "bool"},
     "domain": {"dataAnclass": "string"},
     "admin": {"dataAnclass": "string"},
@@ -11,6 +12,8 @@
     "centralPswd": {"dataAnclass": "string"}
   },
   "ctorsemantics": [
-    { "base": {} }
+    { "base": {},
+      "args": [{"stype": "ini", "args": ["const string&", "protocolpath", "protocolpath"]}] },
+    { "base": {"stype":"()", "args": ["TestSettings", "\"jserv-album\""]} }
   ]
 }

@@ -67,8 +67,6 @@ TEST(Syncpage, Query) {
     AstMap asts;
     JsonOpt opts{&asts};
     register_jserv(asts, opts);
-    // load_ansessionreqAst(asts, "ast-cpy/session-req.ast.json");
-    // load_ansessionrespAst(asts, "ast-cpy/session-resp.ast.json");
     register_doctier(asts, "./");
     register_testsettingsAst(asts);
 
@@ -77,6 +75,7 @@ TEST(Syncpage, Query) {
 
     PhotoMeta phm{"opaque to client"};
     JProtocol jprotocol;
+    jprotocol.setup(settings.protocolpath, Port::docstier);
     JServUrl jserv{settings.jserv, jprotocol};
 
     OnError onErr = [](MsgCode c, string_view e, vector<string_view> &a) {

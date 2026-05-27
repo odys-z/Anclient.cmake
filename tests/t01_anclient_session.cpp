@@ -10,8 +10,9 @@
 
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
-#include <gen/jserv.hpp>
+#include <io/odysz/gen/doctier.hpp>
 
+#include "io/odysz/gen/semantier.hpp"
 #include "io/odysz/semantier.h"
 #include "io/odysz/clients.h"
 
@@ -21,11 +22,15 @@ using namespace anson;
 using namespace entt;
 using namespace entt::literals;
 
+/**
+ * @brief Requires starting jserv-sample at localhost:8080 before running the test.
+ */
 TEST(ANCLIENT, PING) {
     AstMap enums;
     JsonOpt opts{&enums};
     register_jserv(enums, opts);
     load_echoAst_ext(enums);
+    register_semantier(enums, "./");
 
     OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
@@ -40,14 +45,15 @@ TEST(ANCLIENT, PING) {
     ASSERT_EQ("TEST Echo...", resp.m);
 }
 
+/**
+ * @brief Requires starting jserv-sample at localhost:8080 before running the test.
+ */
 TEST(ANCLIENT, AnSESSION) {
     AstMap enums;
     JsonOpt opts{&enums};
     register_jserv(enums, opts);
     load_echoAst_ext(enums);
-    load_ansessionreqAst(enums, "ast-cpy/session-req.ast.json");
-    load_ansessionrespAst(enums, "ast-cpy/session-resp.ast.json");
-
+    register_semantier(enums, "./");
 
     OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
@@ -59,6 +65,6 @@ TEST(ANCLIENT, AnSESSION) {
     SessionClient *c = SessionClient::loginWithUri(jserv, "anclient.cmake", "ody", "123456", "cpp", errctx);
 
     ASSERT_EQ("ody", c->ssInf.uid);
-    anlog(c->ssInf.ssToken);
+    anlog("token: "s + c->ssInf.ssToken);
     ASSERT_EQ(2, LangExt::split(c->ssInf.ssToken, ':').size());
 }

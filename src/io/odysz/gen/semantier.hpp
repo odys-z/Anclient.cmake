@@ -6,11 +6,16 @@
 #include <io/odysz/anson.h>
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
+#include <io/odysz/module/rs.h>
+
+
 
 namespace anson {
+
 class AnSessionReq : public anson::AnsonBody {
 public:
     inline static const std::string _type_ = "io.odysz.semantic.jsession.AnSessionReq";
+
     struct A {
         inline static const string login = "login";
         inline static const string logout = "logout";
@@ -18,7 +23,7 @@ public:
         inline static const string init = "init";
         inline static const string touch = "touch";
         inline static const string ping = "ping";
-	};
+    };
     string uid;
     string token;
     string iv;
@@ -26,7 +31,7 @@ public:
 
     AnSessionReq() : AnsonBody() {
         Type(_type_);
-    };
+    }
 };
 
 inline static void load_ansessionreqAst(AstMap &asts, const string &ast_path) {
@@ -60,27 +65,31 @@ inline static void load_ansessionreqAst(AstMap &asts, const string &ast_path) {
             anerror("get_field_instance<AnSessionReq>(): Failed to get entt instance (meta_any)");
             return { };
         };
-  });
+    });
 }
+
 class AnSessionResp : public anson::AnsonResp {
 public:
     inline static const std::string _type_ = "io.odysz.semantic.jsession.AnSessionResp";
-    // struct A { };
+
+    struct A {
+    };
     SessionInf ssInf;
     Anson profile;
 
-    AnSessionResp(string ssid, string uid, string roleId) : AnsonResp("")  {
+    AnSessionResp(string ssid, string uid, string roleId) : AnsonResp() {
         Type(_type_);
         ssInf.ssid = ssid;
         ssInf.uid = uid;
         ssInf.roleId = roleId;
-    };
+    }
 
-    AnSessionResp(SessionInf ss_inf) : AnsonResp(""), ssInf(ss_inf) {
+    AnSessionResp(SessionInf ss_inf) : ssInf(ss_inf) {
         Type(_type_);
-    };
+    }
 
-    AnSessionResp() : AnSessionResp("", "", "")  {};
+    AnSessionResp() : AnSessionResp("", "", "") {
+    }
 };
 
 inline static void load_ansessionrespAst(AstMap &asts, const string &ast_path) {
@@ -110,6 +119,12 @@ inline static void load_ansessionrespAst(AstMap &asts, const string &ast_path) {
             anerror("get_field_instance<AnSessionResp>(): Failed to get entt instance (meta_any)");
             return { };
         };
-  });
+    });
 }
+
+inline static void register_semantier(AstMap &asts, const string &ast_folder) {
+    load_ansessionreqAst(asts, ast_folder + "./session-req.ast.json");
+    load_ansessionrespAst(asts, ast_folder + "./session-resp.ast.json");
+}
+
 }

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(anclient INTERFACE
-    gen/doctier.hpp
+    io/odysz/gen/doctier.hpp
     io/odysz/clients.h
     io/odysz/jclient/syn.h
     io/odysz/semantic/tier/docs.h
@@ -44,7 +44,6 @@ if(ANCLIENT_BUILD_TESTS)
     add_executable(
         anclient_clangd_helper
         dev/ping.cpp
-        # io/odysz/semantic/json.expect.h
         io/odysz/jclient/syn.h
     )
     target_link_libraries(anclient_clangd_helper PRIVATE anson)

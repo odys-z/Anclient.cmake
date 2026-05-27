@@ -418,7 +418,7 @@ public:
     string synuri;
     string docTabl;
     ExpSyncDoc doc;
-    PageInf  pageInf;
+    PageInf pageInf;
     vector<string> deletings;
     string stamp;
     PathsPage syncingPage;
@@ -585,8 +585,8 @@ inline static void register_doctier(AstMap &asts, const string &ast_folder) {
     register_synentityAst(asts);
     register_pathspageAst(asts);
     register_expsyncdocAst(asts);
-    load_docsreqAst(asts, ast_folder + "ast/docsreq.ast.json");
-    load_docsrespAst(asts, ast_folder + "ast/docsresp.ast.json");
+    load_docsreqAst(asts, ast_folder + "./docsreq.ast.json");
+    load_docsrespAst(asts, ast_folder + "./docsresp.ast.json");
 }
 
 }

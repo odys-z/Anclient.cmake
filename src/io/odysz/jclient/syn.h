@@ -6,7 +6,7 @@
 
 #include "../clients.h"
 
-#include "gen/doctier.hpp"
+#include "io/odysz/gen/doctier.hpp"
 
 
 namespace anson {
@@ -51,6 +51,13 @@ public:
         DocsResp resp = client.commit<DocsResp>(q, err, true);
 
         return resp;
+    }
+
+    inline Doclientier* loginWithUri(const JServUrl &jserv, const string& uri,
+                        const string& uid, const string& pswd, const string& device, const OnError& err) {
+
+        this->client = *SessionClient::loginWithUri(jserv, uri, uid, pswd, device, err);
+        return this;
     }
 };
 

@@ -8,7 +8,8 @@
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/semantier.h>
 
-#include <gen/jserv.hpp>
+#include "io/odysz/gen/semantier.hpp"
+#include "io/odysz/gen/doctier.hpp"
 
 using namespace cpr;
 

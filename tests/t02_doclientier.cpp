@@ -13,10 +13,9 @@
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
 #include <io/odysz/semantier.h>
-#include <gen/jserv.hpp>
 
 #include "io/odysz/jclient/syn.h"
-#include "gen/doctier.hpp"
+#include "io/odysz/gen/doctier.hpp"
 #include "io/odysz/semantic/meta.h"
 #include "io/oz/syn/test_gen.hpp"
 
@@ -61,13 +60,13 @@ void ExpSyncDoc::format(const AnResultset & rs) {
 
 void DocsReq::format(const IFileDescriptor &, const string) {}
 
-
 TEST(Syncpage, Query) {
 
     AstMap asts;
     JsonOpt opts{&asts};
     register_jserv(asts, opts);
-    register_doctier(asts, "./");
+    register_semantier(asts, "./");
+    register_doctier(asts, "ast/");
     register_testsettingsAst(asts);
 
     TestSettings settings;
@@ -83,6 +82,13 @@ TEST(Syncpage, Query) {
     };
 
     Doclientier doclient{phm.tbl, jserv, onErr};
+    doclient.loginWithUri(jserv, "Syncpage.query", settings.admin, settings.domain_token, "cpp-test", onErr);
+
+    SessionInf ssinf = doclient.client.ssInf;
+    ASSERT_EQ(settings.admin, ssinf.uid);
+    ASSERT_EQ(8, ssinf.ssid.length());
+    ASSERT_EQ(string{"eV+Rb6ZZSEDn4dl6KX81yf8Gp0XEsGf5+WbsdC5+aD8=:qtPxqG61FzMweHX1fDD0ew=="}.length(),
+              ssinf.ssToken.length());
 
     verifyPathsPage(doclient, phm.tbl, {});
 }

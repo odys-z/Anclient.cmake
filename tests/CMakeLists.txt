@@ -11,7 +11,7 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 add_executable(anclient_tests
-    # t01_anclient_session.cpp
+    t01_anclient_session.cpp
     t02_doclientier.cpp
     io/odysz/semantic/meta.h
     io/oz/syn/test_gen.hpp
@@ -43,7 +43,7 @@ target_link_libraries(anclient_tests
 
 target_compile_options(anclient_tests PRIVATE /showIncludes)
 
-add_compile_definitions(ANSON_VERBOSE=4)
+add_compile_definitions(ANSON_VERBOSE=5)
 
 if(MSVC)
     target_compile_options(anclient_tests PRIVATE "/bigobj")

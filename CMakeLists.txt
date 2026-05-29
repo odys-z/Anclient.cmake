@@ -29,6 +29,9 @@ message(STATUS "=========================================== CMAKE_CURRENT_SOURCE
 # vcpkg install openssl:x64-windows
 find_package(OpenSSL REQUIRED)
 
+# vcpkg install boost-url
+find_package(Boost CONFIG REQUIRED COMPONENTS url)
+
 # ./vcpkg install entt:x64-windows --x-install-root="../Anclient.cmake/vcpkg_packages"
 find_package(EnTT CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)

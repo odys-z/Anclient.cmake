@@ -67,4 +67,11 @@ TEST(ANCLIENT, AnSESSION) {
     ASSERT_EQ("ody", c->ssInf.uid);
     anlog("token: "s + c->ssInf.ssToken);
     ASSERT_EQ(2, LangExt::split(c->ssInf.ssToken, ':').size());
+
+    vector<string_view> ss = LangExt::split(c->ssInf.ssToken, ':');
+    string knowledge = AESHelper2::decrypt(string{ss[0]}, "123456", AESHelper2::decode64(string{ss[1]}));
+    knowledge = LangExt::split(knowledge, ':')[1]; // What we got here is not the response of server, it's repacked token. So need decape the prefix
+
+    ASSERT_TRUE(AESHelper2::verifyToken(c->ssInf.ssToken, knowledge, "ody", "123456"));
+
 }

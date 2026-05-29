@@ -27,14 +27,16 @@ public:
     const string doctbl;
     const OnError & err;
 
-    SessionClient client;
+    SessionClient *client;
 
     Doclientier(const string &doctbl, const JServUrl &jserv, const OnError& onerr)
-        : doctbl(doctbl), client(jserv), err(onerr) {}
+        : doctbl(doctbl), err(onerr) {
+        client = new SessionClient(jserv);
+    }
 
     DocsResp synQueryPathsPage(const PathsPage &page, Port port) {
-        AnsonHeader header{client.ssInf.ssid, client.ssInf.uid, client.ssInf.ssToken};
-        header.Act("synclient.java", "query", "r/states", "query sync");
+        AnsonHeader header = client->Header();
+        header.Act("synclient.cpp", "query", "r/states", "query sync");
 
         DocsReq req {doctbl, {}, ""};
 
@@ -48,7 +50,7 @@ public:
         q.Body(req);
         q.Header(header);
 
-        DocsResp resp = client.commit<DocsResp>(q, err, true);
+        DocsResp resp = client->commit<DocsResp>(q, err, true);
 
         return resp;
     }
@@ -56,7 +58,7 @@ public:
     inline Doclientier* loginWithUri(const JServUrl &jserv, const string& uri,
                         const string& uid, const string& pswd, const string& device, const OnError& err) {
 
-        this->client = *SessionClient::loginWithUri(jserv, uri, uid, pswd, device, err);
+        this->client = SessionClient::loginWithUri(jserv, uri, uid, pswd, device, err);
         return this;
     }
 };

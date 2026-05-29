@@ -4,12 +4,12 @@
 #include <string>
 #include <cpr/cpr.h>
 
+#include <io/odysz/common.h>
 #include <io/odysz/reflect.h>
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/semantier.h>
 
 #include "io/odysz/gen/semantier.hpp"
-#include "io/odysz/gen/doctier.hpp"
 
 using namespace cpr;
 
@@ -25,6 +25,13 @@ public:
     SessionInf ssInf;
 
     SessionClient(const JServUrl &jserv) : jserv(jserv) { }
+
+    AnsonHeader Header() {
+        if (LangExt::isblank(header.ssid)) {
+            header = AnsonHeader{ssInf.uid, ssInf.ssid, ssInf.ssToken};
+        }
+        return header;
+    }
 
     template<typename Rp, typename R>
     static Rp& commit(const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
@@ -157,6 +164,8 @@ inline SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const s
 
     SessionClient* client = new SessionClient{jserv};
     client->ssInf = rply.ssInf;
+    andebug(std::format("{}: {}", client->ssInf.ssid, client->ssInf.ssToken));
+    client->ssInf.ssToken = AESHelper2::repackSessionToken(client->ssInf.ssToken, pswd, uid);
 
     return client;
 }

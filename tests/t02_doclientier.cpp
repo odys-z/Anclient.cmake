@@ -33,7 +33,7 @@ void DocsReq::format(const IFileDescriptor& p) {
 }
 
 static void verifyPathsPage(Doclientier &clientier, const string &entityName, vector<string> paths) {
-    PathsPage pths(clientier.client.ssInf.device, 0, 1);
+    PathsPage pths(clientier.client->ssInf.device, 0, 1);
     set<string> pathpool;
     for (string pth : paths) {
         pths.clientPaths.insert({pth, {}}); // what's the querying flag?
@@ -44,7 +44,7 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
 
     PathsPage pthpage = rep.syncingPage;
 
-    ASSERT_EQ(clientier.client.ssInf.device, pthpage.device);
+    ASSERT_EQ(clientier.client->ssInf.device, pthpage.device);
     ASSERT_EQ(paths.size(), pthpage.clientPaths.size());
 
     for (string pth : paths)
@@ -52,13 +52,13 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
 
     ASSERT_EQ(0, pathpool.size());
 }
-}
 
 void ExpSyncDoc::format(const AnResultset & rs) {
 
 }
 
 void DocsReq::format(const IFileDescriptor &, const string) {}
+}
 
 TEST(Syncpage, Query) {
 
@@ -84,7 +84,7 @@ TEST(Syncpage, Query) {
     Doclientier doclient{phm.tbl, jserv, onErr};
     doclient.loginWithUri(jserv, "Syncpage.query", settings.admin, settings.domain_token, "cpp-test", onErr);
 
-    SessionInf ssinf = doclient.client.ssInf;
+    SessionInf ssinf = doclient.client->ssInf;
     ASSERT_EQ(settings.admin, ssinf.uid);
     ASSERT_EQ(8, ssinf.ssid.length());
     ASSERT_EQ(string{"eV+Rb6ZZSEDn4dl6KX81yf8Gp0XEsGf5+WbsdC5+aD8=:qtPxqG61FzMweHX1fDD0ew=="}.length(),

@@ -1,0 +1,2 @@
+INSERT INTO h_photos (pid,family,folder,docname,uri,pdate,device,clientpath,shareby,sharedate,tags,geox,geoy,exif,mime,filesize,css,shareflag,oper,opertime,syncstamp,io_oz_synuid) VALUES
+	 ('should be died','inforise','folder.cmake','infor-17','',NULL,'cpp-test','path/a','ody','now()',NULL,0.0,0.0,NULL,NULL,0,NULL,'prv','ody','now()','2026-06-01 03:23:02','should-died-0001');

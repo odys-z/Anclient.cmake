@@ -33,7 +33,7 @@ void DocsReq::format(const IFileDescriptor& p) {
 }
 
 static void verifyPathsPage(Doclientier &clientier, const string &entityName, vector<string> paths) {
-    PathsPage pths(clientier.client->ssInf.device, 0, 1);
+    PathsPage pths(clientier.client->ssInf.device, 0, paths.size());
     set<string> pathpool;
     for (string pth : paths) {
         pths.clientPaths.insert({pth, {}}); // what's the querying flag?
@@ -44,7 +44,7 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
 
     PathsPage pthpage = rep.syncingPage;
 
-    ASSERT_EQ(clientier.client->ssInf.device, pthpage.device);
+    ASSERT_EQ(clientier.client->ssInf.device, rep.device);
     ASSERT_EQ(paths.size(), pthpage.clientPaths.size());
 
     for (string pth : paths)
@@ -53,9 +53,7 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
     ASSERT_EQ(0, pathpool.size());
 }
 
-void ExpSyncDoc::format(const AnResultset & rs) {
-
-}
+void ExpSyncDoc::format(const AnResultset & rs) {}
 
 void DocsReq::format(const IFileDescriptor &, const string) {}
 }
@@ -81,8 +79,8 @@ TEST(Syncpage, Query) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
-    Doclientier doclient{phm.tbl, jserv, onErr};
-    doclient.loginWithUri(jserv, "Syncpage.query", settings.admin, settings.domain_token, "cpp-test", onErr);
+    Doclientier doclient{phm.tbl, "/sys", "/syn", onErr};
+    doclient.loginWithUri(jserv, settings.admin, settings.domain_token, "cpp-test", onErr);
 
     SessionInf ssinf = doclient.client->ssInf;
     ASSERT_EQ(settings.admin, ssinf.uid);
@@ -91,4 +89,12 @@ TEST(Syncpage, Query) {
               ssinf.ssToken.length());
 
     verifyPathsPage(doclient, phm.tbl, {});
+
+    /*
+     * INSERT INTO h_photos
+     * (pid,family,folder,docname,uri,pdate,device,clientpath,shareby,sharedate,tags,geox,geoy,exif,mime,filesize,css,shareflag,oper,opertime,syncstamp,io_oz_synuid)
+     * VALUES
+     * ('should be died','inforise','folder.cmake','infor-17','',NULL,'cpp-test','path/a','ody','now()',NULL,0.0,0.0,NULL,NULL,0,NULL,'prv','ody','now()','2026-06-01 03:23:02','should-died-0001');
+     */
+    verifyPathsPage(doclient, phm.tbl, {"path/a"});
 }

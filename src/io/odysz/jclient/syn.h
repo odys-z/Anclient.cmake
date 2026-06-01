@@ -21,7 +21,7 @@ public:
 class Doclientier : public Semantier {
 
 public:
-    const string sysuri;
+    string sysuri;
     const string synuri;
     const Port port;
     const string doctbl;
@@ -29,18 +29,18 @@ public:
 
     SessionClient *client;
 
-    Doclientier(const string &doctbl, const JServUrl &jserv, const OnError& onerr)
-        : doctbl(doctbl), err(onerr) {
-        client = new SessionClient(jserv);
+    Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnError& onerr)
+        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr) {
+        // client = new SessionClient(jserv);
     }
 
     DocsResp synQueryPathsPage(const PathsPage &page, Port port) {
         AnsonHeader header = client->Header();
         header.Act("synclient.cpp", "query", "r/states", "query sync");
 
-        DocsReq req {doctbl, {}, ""};
+        DocsReq req {doctbl, {}, synuri};
 
-        req.uri = sysuri;
+        // req.uri = synuri;
         req.synuri = synuri;
         req.syncingPage = page;
         req.device = Device{page.device, "synode anclient.cmake test", "Ody@test"};
@@ -55,10 +55,9 @@ public:
         return resp;
     }
 
-    inline Doclientier* loginWithUri(const JServUrl &jserv, const string& uri,
-                        const string& uid, const string& pswd, const string& device, const OnError& err) {
-
-        this->client = SessionClient::loginWithUri(jserv, uri, uid, pswd, device, err);
+    inline Doclientier* loginWithUri(const JServUrl &jserv,
+           const string& uid, const string& pswd, const string& device, const OnError& err) {
+        this->client = SessionClient::loginWithUri(jserv, sysuri, uid, pswd, device, err);
         return this;
     }
 };

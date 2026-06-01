@@ -73,7 +73,7 @@ public:
                 if(resp->body_size() == 0)
                     resp->Body(Rp()); // managed by shared_ptr
                 resp->body[0]->msg("Parsing response failed: " + r.text);
-                err(MsgCode::Code::exGeneral, r.error.message, err_args);
+                err(MsgCode::Code::exGeneral, r.error.message + "\n" + r.text, err_args);
             }
             else if (resp->code != MsgCode::Code::ok) {
                 err(resp->code, {resp->body.at(0)->m}, err_args);

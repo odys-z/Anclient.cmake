@@ -43,7 +43,7 @@ target_link_libraries(anclient_tests
 
 target_compile_options(anclient_tests PRIVATE /showIncludes)
 
-add_compile_definitions(ANSON_VERBOSE=5)
+add_compile_definitions(ANSON_VERBOSE=4)
 
 if(MSVC)
     target_compile_options(anclient_tests PRIVATE "/bigobj")

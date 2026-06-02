@@ -47,10 +47,12 @@
 				 {"stype": "ini", "args": ["const", "string", "uri", "synuri"]},
 	  			 {"stype": "", "args": ["const", "IFileDescriptor", "&", "p"]} ],
 		"body": [{"stype": "()", "args": ["format", "p", "uri"],
-				 "expect_result":  "void format(IFileDescriptor p, string uri)"}] } ,
+				 "expect_result":  "void format(IFileDescriptor p, string uri)"},
+				 {"stype": "=", "args": ["AnsonBody::uri", "uri"]}] },
 	  { "base": {"stype": "()", "args": ["UserReq", "uri"]},
 		"args": [{"stype": "ini", "args": ["const string &", "docTabl", "docTabl"]},
 			  {"stype": "ini", "args": ["const ExpSyncDoc &", "doc", "doc"]},
-			  {"stype": "ini", "args": ["const string &", "uri", "synuri"]} ]}
+			  {"stype": "ini", "args": ["const string &", "uri", "synuri"]} ],
+		"body": [{"stype": "=", "args": ["AnsonBody::uri", "uri"]}] }
   ]
 }

@@ -61,3 +61,5 @@ tests/res/synode-7.10-reddish/web-dist
 tests/res/synode-7.10-reddish/vol
 tests/**/synode-*-instance.json
 !tests/**/synode-*.*-template-instance.json
+
+commit.comments

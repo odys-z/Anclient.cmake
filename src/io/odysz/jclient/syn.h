@@ -27,15 +27,14 @@ public:
     const string doctbl;
     const OnError & err;
 
-    SessionClient *client;
+    SessionClient client;
 
     Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnError& onerr)
-        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr) {
-        // client = new SessionClient(jserv);
+        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(JServUrl{"", {}}) {
     }
 
     DocsResp synQueryPathsPage(const PathsPage &page, Port port) {
-        AnsonHeader header = client->Header();
+        AnsonHeader header = client.Header();
         header.Act("synclient.cpp", "query", "r/states", "query sync");
 
         DocsReq req {doctbl, {}, synuri};
@@ -50,7 +49,7 @@ public:
         q.Body(req);
         q.Header(header);
 
-        DocsResp resp = client->commit<DocsResp>(q, err, true);
+        DocsResp resp = client.commit<DocsResp>(q, err, true);
 
         return resp;
     }

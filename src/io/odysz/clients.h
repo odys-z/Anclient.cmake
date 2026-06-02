@@ -8,6 +8,8 @@
 #include <io/odysz/reflect.h>
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/semantier.h>
+#include <io/odysz/semantic/x.h>
+#include <io/odysz/transact/x.h>
 
 #include "io/odysz/gen/semantier.hpp"
 
@@ -74,11 +76,11 @@ public:
                     resp->Body(Rp()); // managed by shared_ptr
                 resp->body[0]->msg("Parsing response failed: " + r.text);
                 err(MsgCode::Code::exGeneral, r.error.message + "\n" + r.text, err_args);
-                throw std::runtime_error(resp->Body().m);
+                throw SemanticException(resp->Body().m);
             }
             else if (resp->code != MsgCode::Code::ok) {
                 err(resp->code, {resp->Body().m}, err_args);
-                throw std::runtime_error(resp->Body().m);
+                throw SemanticException(resp->Body().m);
             }
             return resp->Body();
         } else {
@@ -89,9 +91,9 @@ public:
             resp->body[0]->msg(r.error.message);
             vector<string_view> args;
             err(MsgCode::Code::exIo, string_view(r.error.message), args);
-            throw std::runtime_error(r.error.message);
+            throw std::system_error(std::make_error_code(std::errc::host_unreachable),
+                                    resp->Body().m);
         }
-        // throw std::runtime_error("Commit failed");
     }
 
     template<typename Rp, typename R>
@@ -101,7 +103,7 @@ public:
 
     inline static void format_sessionReq(AnSessionReq &req, const string uid, const string & pswd, const string &device);
 
-    inline static SessionClient* loginWithUri(const JServUrl &jserv, const string uri,
+    inline static SessionClient loginWithUri(const JServUrl &jserv, const string uri,
             const string uid, const string pswd, const string device, OnError err);
 
     template<typename R>
@@ -152,7 +154,7 @@ public:
     }
 };
 
-inline SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const string uri,
+inline SessionClient SessionClient::loginWithUri(const JServUrl &jserv, const string uri,
             const string uid, const string pswd, const string device, OnError err) {
 
     AnSessionReq req{};
@@ -165,10 +167,10 @@ inline SessionClient* SessionClient::loginWithUri(const JServUrl &jserv, const s
 
     AnSessionResp &rply = SessionClient::commit<AnSessionResp>(jserv, msg, err);
 
-    SessionClient* client = new SessionClient{jserv};
-    client->ssInf = rply.ssInf;
-    andebug(std::format("{}: {}", client->ssInf.ssid, client->ssInf.ssToken));
-    client->ssInf.ssToken = AESHelper2::repackSessionToken(client->ssInf.ssToken, pswd, uid);
+    SessionClient client{jserv};
+    client.ssInf = rply.ssInf;
+    andebug(std::format("{}: {}", client.ssInf.ssid, client.ssInf.ssToken));
+    client.ssInf.ssToken = AESHelper2::repackSessionToken(client.ssInf.ssToken, pswd, uid);
 
     return client;
 }

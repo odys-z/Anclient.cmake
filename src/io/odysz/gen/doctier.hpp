@@ -445,10 +445,12 @@ public:
     DocsReq(AnsonMsg<AnsonBody> parent, const string uri, const IFileDescriptor & p) : UserReq(uri), synuri(uri) {
         Type(_type_);
         format(p, uri);
+        AnsonBody::uri = uri;
     }
 
     DocsReq(const string & docTabl, const ExpSyncDoc & doc, const string & uri) : UserReq(uri), docTabl(docTabl), doc(doc), synuri(uri) {
         Type(_type_);
+        AnsonBody::uri = uri;
     }
 };
 

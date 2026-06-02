@@ -74,10 +74,13 @@ public:
                     resp->Body(Rp()); // managed by shared_ptr
                 resp->body[0]->msg("Parsing response failed: " + r.text);
                 err(MsgCode::Code::exGeneral, r.error.message + "\n" + r.text, err_args);
+                throw std::runtime_error(resp->Body().m);
             }
             else if (resp->code != MsgCode::Code::ok) {
-                err(resp->code, {resp->body.at(0)->m}, err_args);
+                err(resp->code, {resp->Body().m}, err_args);
+                throw std::runtime_error(resp->Body().m);
             }
+            return resp->Body();
         } else {
             std::cerr << "Error - Clients::commit(): " << r.status_code << " - " << r.error.message << std::endl;
             resp->Code(MsgCode::Code::exIo);
@@ -86,9 +89,9 @@ public:
             resp->body[0]->msg(r.error.message);
             vector<string_view> args;
             err(MsgCode::Code::exIo, string_view(r.error.message), args);
+            throw std::runtime_error(r.error.message);
         }
-
-        return resp->Body();
+        // throw std::runtime_error("Commit failed");
     }
 
     template<typename Rp, typename R>

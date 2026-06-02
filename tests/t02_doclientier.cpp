@@ -44,7 +44,7 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
 
     PathsPage pthpage = rep.syncingPage;
 
-    ASSERT_EQ(clientier.client->ssInf.device, rep.device);
+    ASSERT_EQ(clientier.client->ssInf.device, rep.device.id);
     ASSERT_EQ(paths.size(), pthpage.clientPaths.size());
 
     for (string pth : paths)

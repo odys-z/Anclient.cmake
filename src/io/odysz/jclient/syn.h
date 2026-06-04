@@ -39,7 +39,6 @@ public:
 
         DocsReq req {doctbl, {}, synuri};
 
-        // req.uri = synuri;
         req.synuri = synuri;
         req.syncingPage = page;
         req.device = Device{page.device, "synode anclient.cmake test", "Ody@test"};
@@ -59,6 +58,23 @@ public:
         this->client = SessionClient::loginWithUri(jserv, sysuri, uid, pswd, device, err);
         return this;
     }
+
+    void push_files(map<string, vector<string>> paths, OnProgress onprc) {
+
+        // // PathsPage sync_page(device);
+        // DocsReq reqbd{device, DocsReq::A::requestSyn};
+
+        // QJSValueIterator it(paths);
+        // while (it.hasNext()) {
+        //     it.next();
+        //     QString pth = it.name();
+
+        //     reqbd.syncingPage.append(pth.toStdString(), "synching");
+
+        //     onprc(pth, "synching");
+        // }
+    }
+
 };
 
 }

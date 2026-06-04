@@ -41,10 +41,9 @@ target_link_libraries(anclient_tests
         gtest_main
 )
 
-target_compile_options(anclient_tests PRIVATE /showIncludes)
-
 add_compile_definitions(ANSON_VERBOSE=4)
 
-if(MSVC)
-    target_compile_options(anclient_tests PRIVATE "/bigobj")
-endif()
+# target_compile_options(anclient_tests PRIVATE /showIncludes)
+# if(MSVC)
+#     target_compile_options(anclient_tests PRIVATE "/bigobj")
+# endif()

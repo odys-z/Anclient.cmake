@@ -3,6 +3,10 @@ The cmake version of Anclient.
 
 # Test
 
+- Jun 4, 2026
+
+Switch to MinGW with g++ 16.1.0.
+
 Install latest semantier_generator from PYPI.
 
 ```

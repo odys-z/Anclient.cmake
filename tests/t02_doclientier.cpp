@@ -1,5 +1,3 @@
-#pragma once
-
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN     // excludes OLE/COM/RPC stuff → no rpcndr.h
 #define NOMINMAX                // prevents min/max macro clashes
@@ -35,7 +33,7 @@ void DocsReq::format(const IFileDescriptor& p) {
 static void verifyPathsPage(Doclientier &clientier, const string &entityName, vector<string> paths) {
     PathsPage pths(clientier.client.ssInf.device, 0, paths.size());
     set<string> pathpool;
-    for (string pth : paths) {
+    for (const string& pth : paths) {
         pths.clientPaths.insert({pth, {}}); // what's the querying flag?
         pathpool.insert(pth);
     }
@@ -47,7 +45,7 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
     ASSERT_EQ(clientier.client.ssInf.device, rep.device.id);
     ASSERT_EQ(paths.size(), pthpage.clientPaths.size());
 
-    for (string pth : paths)
+    for (const string& pth : paths)
         pathpool.erase(pth);
 
     ASSERT_EQ(0, pathpool.size());
@@ -69,6 +67,7 @@ TEST(Syncpage, Query) {
 
     TestSettings settings;
     bool result = Anson::from_file("settings/synode-7.10-reddish-instance.json", settings);
+    ASSERT_TRUE(result);
 
     PhotoMeta phm{"opaque to client"};
     JProtocol jprotocol;

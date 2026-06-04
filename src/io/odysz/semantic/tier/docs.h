@@ -38,19 +38,25 @@ public:
 
     ShareFlag(string& f) : IJsonable("") , v(f) {}
 
-    string toBlock(JsonOpt& opts) override {
+    const IJsonable* toBlock(ostream& os, const JsonOpt& opts) const {
+    // string toBlock(JsonOpt& opts) override {
         // stream.put('\"');
         // stream.write(name().c_str(), name().size());
         // stream.put('\"');
         // return this;
-        return {'"' + v + '"'};
+        os << '"' + v + '"';
+        return this;
     }
 
-    IJsonable* toJson(string& buf) {
+    const IJsonable* toJson(string& buf) const {
         buf += '\"';
         buf += v;
         buf += '\"';
         return this;
+    }
+
+    string name() const {
+        return "TODO NAME OF "s + v;
     }
 };
 

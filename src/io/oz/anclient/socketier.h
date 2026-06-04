@@ -12,7 +12,7 @@ public:
     inline static const string _type_ = "io.oz.anclient.socketier.WSEchoReq";
     string echo;
 
-    WSEchoReq(string a) : AnsonBody(a, _type_) { }
+    WSEchoReq(string a) : AnsonBody(a) { }
 };
 
 }

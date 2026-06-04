@@ -37,7 +37,6 @@ target_link_libraries(anson INTERFACE
     anson
 )
 
-
 # clangd helper, see also .clangd/index
 if(ANCLIENT_BUILD_TESTS)
     # set(ANSON_BUILD_TESTS ON) not working

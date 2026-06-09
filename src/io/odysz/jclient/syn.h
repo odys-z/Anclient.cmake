@@ -13,7 +13,7 @@ namespace anson {
 
 class Semantier {
 public:
-    string mtabl;
+    std::string mtabl;
 
 };
 
@@ -28,6 +28,8 @@ public:
     const OnError & err;
 
     SessionClient client;
+
+    Doclientier(const OnError& err) : client(JServUrl{"", {}}), err(err) {}
 
     Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnError& onerr)
         : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(JServUrl{"", {}}) {

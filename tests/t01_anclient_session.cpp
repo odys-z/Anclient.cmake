@@ -26,13 +26,17 @@ using namespace entt::literals;
  * @brief Requires starting jserv-sample at localhost:8080 before running the test.
  */
 TEST(ANCLIENT, PING) {
+    aninfo(R"([Note 13 June 2026]
+    To run this test,
+    start jserv-sample JsampleApp (port 8080).)");
+
     AstMap enums;
     JsonOpt opts{&enums};
     register_jserv(enums, opts);
     load_echoAst_ext(enums);
     register_semantier(enums, "./");
 
-    OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
+    OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
@@ -55,7 +59,7 @@ TEST(ANCLIENT, AnSESSION) {
     load_echoAst_ext(enums);
     register_semantier(enums, "./");
 
-    OnError errctx = [](MsgCode c, string_view e, vector<string_view> &a) {
+    OnError errctx = [](MsgCode c, const string& e, const vector<string> &a) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 

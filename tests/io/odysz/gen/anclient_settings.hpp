@@ -1,4 +1,3 @@
-/** Auto generated, and deprecated */
 #pragma once
 
 #include <entt/meta/factory.hpp>
@@ -13,12 +12,9 @@
 
 namespace anson {
 
-/**
- * @deprecated Auto generated, and deprecated as replaced by AnclientSettings
- */
-class TestSettings : public anson::Anson {
+class AnclientSettings : public anson::Anson {
 public:
-    inline static const std::string _type_ = "io.oz.syn.test.TestSettings";
+    inline static const std::string _type_ = "io.odysz.gen.AnclientSettings";
     string jserv;
     string protocolpath;
     bool readonly;
@@ -28,17 +24,17 @@ public:
     string regiserv;
     string centralPswd;
 
-    TestSettings(const string& protocolpath) : protocolpath(protocolpath) {
+    AnclientSettings(const string& protocolpath) : protocolpath(protocolpath) {
         Type(_type_);
     }
 
-    TestSettings() : TestSettings("jserv-album") {
+    AnclientSettings() : AnclientSettings("jserv-album") {
     }
 };
 
-inline static void register_testsettingsAst(AstMap & asts) {
+inline static void register_anclientsettingsAst(AstMap & asts) {
 
-    AnsonAst * ast = createAST <TestSettings, AnsonAst> (
+    AnsonAst * ast = createAST <AnclientSettings, AnsonAst> (
         asts, Anson::_type_, map <string, AnsonField> {
         {"jserv", {.dataAnclass="string"} },
         {"protocolpath", {.dataAnclass="string"} },
@@ -50,26 +46,26 @@ inline static void register_testsettingsAst(AstMap & asts) {
         {"centralPswd", {.dataAnclass="string"} },
        });
 
-    entt::meta_factory <anson::TestSettings> ()
+    entt::meta_factory <anson::AnclientSettings> ()
         .type(ast->enttypeid)
         .base<Anson>()
         .ctor<const string&>()
         .ctor<>()
 
-        .data<&anson::TestSettings::jserv>("jserv")
-        .data<&anson::TestSettings::protocolpath>("protocolpath")
-        .data<&anson::TestSettings::readonly>("readonly")
-        .data<&anson::TestSettings::domain>("domain")
-        .data<&anson::TestSettings::admin>("admin")
-        .data<&anson::TestSettings::domain_token>("domain_token")
-        .data<&anson::TestSettings::regiserv>("regiserv")
-        .data<&anson::TestSettings::centralPswd>("centralPswd")
+        .data<&anson::AnclientSettings::jserv>("jserv")
+        .data<&anson::AnclientSettings::protocolpath>("protocolpath")
+        .data<&anson::AnclientSettings::readonly>("readonly")
+        .data<&anson::AnclientSettings::domain>("domain")
+        .data<&anson::AnclientSettings::admin>("admin")
+        .data<&anson::AnclientSettings::domain_token>("domain_token")
+        .data<&anson::AnclientSettings::regiserv>("regiserv")
+        .data<&anson::AnclientSettings::centralPswd>("centralPswd")
         ;
 
         //
         ast->get_field_instance = [ast](const IJsonable& ans, const string& fieldname) -> meta_any {
             if (ast->fields.contains(fieldname)) {
-                auto& concrete = static_cast<const TestSettings&>(ans);
+                auto& concrete = static_cast<const AnclientSettings&>(ans);
                 if ("jserv" == fieldname)
                     return entt::forward_as_meta(concrete.jserv);
                 if ("protocolpath" == fieldname)
@@ -93,7 +89,7 @@ inline static void register_testsettingsAst(AstMap & asts) {
                 return bast->get_field_instance(ans, fieldname);
             }
 
-            anerror("get_field_instance<TestSettings>(): Failed to get entt instance (meta_any)");
+            anerror("get_field_instance<AnclientSettings>(): Failed to get entt instance (meta_any)");
             return { };
         };
 }

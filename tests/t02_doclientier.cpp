@@ -15,7 +15,8 @@
 #include "io/odysz/jclient/syn.h"
 #include "io/odysz/gen/doctier.hpp"
 #include "io/odysz/semantic/meta.h"
-#include "io/oz/syn/test_gen.hpp"
+// #include "io/oz/syn/test_gen.hpp"
+#include "io/odysz/gen/anclient_settings.hpp"
 
 using namespace std;
 using namespace std;
@@ -31,7 +32,7 @@ void DocsReq::format(const IFileDescriptor& p) {
 }
 
 static void verifyPathsPage(Doclientier &clientier, const string &entityName, vector<string> paths) {
-    PathsPage pths(clientier.client.ssInf.device, 0, paths.size());
+    PathsPage pths(clientier.client.ssInf.device, 0, paths.size() + 1);
     set<string> pathpool;
     for (const string& pth : paths) {
         pths.clientPaths.insert({pth, {}}); // what's the querying flag?
@@ -58,14 +59,19 @@ void DocsReq::format(const IFileDescriptor &, const string) {}
 
 TEST(Syncpage, Query) {
 
+    aninfo(R"([Note 13 June 2026]
+    To run this test,
+    start synode infor 17.1 (port 8957)
+    setup settings/synode-7.10-reddish-instance.json)");
+
     AstMap asts;
     JsonOpt opts{&asts};
     register_jserv(asts, opts);
     register_semantier(asts, "./");
     register_doctier(asts, "ast/");
-    register_testsettingsAst(asts);
+    register_anclientsettingsAst(asts);
 
-    TestSettings settings;
+    AnclientSettings settings;
     bool result = Anson::from_file("settings/synode-7.10-reddish-instance.json", settings);
     ASSERT_TRUE(result);
 
@@ -74,7 +80,7 @@ TEST(Syncpage, Query) {
     jprotocol.setup(settings.protocolpath, Port::docstier);
     JServUrl jserv{settings.jserv, jprotocol};
 
-    OnError onErr = [](MsgCode c, string_view e, vector<string_view> &a) {
+    OnError onErr = [](MsgCode c, const string &e, const vector<string> &a) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 

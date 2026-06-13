@@ -69,17 +69,16 @@ public:
 
             bool result = Anson::from_json(r.text, *resp);
 
-            vector<string_view> err_args;
             if (!result) {
                 resp->Code(MsgCode::Code::exGeneral);
                 if(resp->body_size() == 0)
                     resp->Body(Rp()); // managed by shared_ptr
                 resp->body[0]->msg("Parsing response failed: " + r.text);
-                err(MsgCode::Code::exGeneral, r.error.message + "\n" + r.text, err_args);
+                err(MsgCode::Code::exGeneral, r.error.message + "\n" + r.text, {});
                 throw SemanticException(resp->Body().m);
             }
             else if (resp->code != MsgCode::Code::ok) {
-                err(resp->code, {resp->Body().m}, err_args);
+                err(resp->code, {resp->Body().m}, {});
                 throw SemanticException(resp->Body().m);
             }
             return resp->Body();
@@ -89,8 +88,7 @@ public:
             if(resp->body_size() == 0)
                 resp->Body(Rp());
             resp->body[0]->msg(r.error.message);
-            vector<string_view> args;
-            err(MsgCode::Code::exIo, string_view(r.error.message), args);
+            err(MsgCode::Code::exIo, r.error.message, {});
             throw std::system_error(std::make_error_code(std::errc::host_unreachable),
                                     resp->Body().m);
         }
@@ -123,7 +121,7 @@ class Clients {
 public:
     inline static bool if_verbose;
 
-    inline static OnError err = [] (MsgCode c, string_view m, vector<string_view> args) {
+    inline static OnError err = [] (MsgCode c, const string& m, const vector<string>& args) {
         anerror(format("code: {}, msg:\n{}", AnsonJavaEnumAst::name<MsgCode>(c), m));
         anerror(args);
     };

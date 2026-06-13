@@ -1,5 +1,5 @@
 { "type": "io.odysz.reflect.AnsonAst",
-  "dataAnclass": "io.oz.syn.test.TestSettings",
+  "dataAnclass": "io.odysz.gen.AnclientSettings",
   "baseAnclass": "io.odysz.anson.Anson",
   "fields" : {
     "jserv": {"dataAnclass": "string"},
@@ -14,6 +14,6 @@
   "ctorsemantics": [
     { "base": {},
       "args": [{"stype": "ini", "args": ["const string&", "protocolpath", "protocolpath"]}] },
-    { "base": {"stype":"()", "args": ["TestSettings", "\"jserv-album\""]} }
+    { "base": {"stype":"()", "args": ["AnclientSettings", "\"jserv-album\""]} }
   ]
 }

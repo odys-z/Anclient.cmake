@@ -14,7 +14,8 @@ add_executable(anclient_tests
     t01_anclient_session.cpp
     t02_doclientier.cpp
     io/odysz/semantic/meta.h
-    io/oz/syn/test_gen.hpp
+    # io/oz/syn/test_gen.hpp
+    io/odysz/gen/anclient_settings.hpp
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD

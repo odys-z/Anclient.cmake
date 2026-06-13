@@ -16,3 +16,9 @@ Install latest semantier_generator from PYPI.
     python3 -m semantier_gen settings/doclientier-settings.json ast
     python3 -m semantier_gen settings/gen-anclient-settings.json ast
 ```
+
+- required service [2026/06/13]
+
+1. synode infor-17.1 port 8957
+
+1. jserv-sample JsampleApp, port 8080

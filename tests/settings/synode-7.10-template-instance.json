@@ -1,4 +1,4 @@
-{ "type": "io.oz.syn.TestSettings",
+{ "type": "io.odysz.gen.AnclientSettings",
   "protocolpath": "jserv-album",
   "jserv": "http://localhost:port/jserv-album",
   "domain": "domain id",

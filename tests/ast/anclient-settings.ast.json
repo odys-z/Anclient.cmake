@@ -1,15 +1,18 @@
 { "type": "io.odysz.reflect.AnsonAst",
-  "dataAnclass": "io.odysz.gen.AnclientSettings",
+  "dataAnclass": "io.odysz.jclient.AnclientSettings",
   "baseAnclass": "io.odysz.anson.Anson",
   "fields" : {
-    "jserv": {"dataAnclass": "string"},
-    "protocolpath": {"dataAnclass": "string"},
-    "readonly": {"dataAnclass": "bool"},
+    "sysuri": {"dataAnclass": "string"},
+    "synuri": {"dataAnclass": "string"},
+    "jserv" : {"dataAnclass": "string"},
+    "jprotocolpath": {"dataAnclass": "string"},
+    "readonly_test": {"dataAnclass": "bool"},
     "domain": {"dataAnclass": "string"},
-    "admin": {"dataAnclass": "string"},
-    "domain_token": {"dataAnclass": "string"},
-    "regiserv": {"dataAnclass": "string"},
-    "centralPswd": {"dataAnclass": "string"}
+    "admin" : {"dataAnclass": "string"},
+    "domain_token" : {"dataAnclass": "string"},
+    "regiserv"     : {"dataAnclass": "string"},
+    "regiprotopath": {"dataAnclass": "string"},
+    "centralPswd"  : {"dataAnclass": "string"}
   },
   "ctorsemantics": [
     { "base": {},

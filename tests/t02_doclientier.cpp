@@ -58,11 +58,12 @@ void DocsReq::format(const IFileDescriptor &, const string) {}
 }
 
 TEST(Syncpage, Query) {
+    string setting_json = "settings/synode-7.10-reddish-instance.json";
 
     aninfo(R"([Note 13 June 2026]
     To run this test,
     start synode infor 17.1 (port 8957)
-    setup settings/synode-7.10-reddish-instance.json)");
+    setup )" + setting_json);
 
     AstMap asts;
     JsonOpt opts{&asts};
@@ -72,12 +73,12 @@ TEST(Syncpage, Query) {
     register_anclientsettingsAst(asts);
 
     AnclientSettings settings;
-    bool result = Anson::from_file("settings/synode-7.10-reddish-instance.json", settings);
+    bool result = Anson::from_file(setting_json, settings);
     ASSERT_TRUE(result);
 
     PhotoMeta phm{"opaque to client"};
     JProtocol jprotocol;
-    jprotocol.setup(settings.protocolpath, Port::docstier);
+    jprotocol.setup(settings.jprotocolpath, Port::docstier);
     JServUrl jserv{settings.jserv, jprotocol};
 
     OnError onErr = [](MsgCode c, const string &e, const vector<string> &a) {

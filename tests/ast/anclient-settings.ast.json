@@ -16,7 +16,7 @@
   },
   "ctorsemantics": [
     { "base": {},
-      "args": [{"stype": "ini", "args": ["const string&", "protocolpath", "protocolpath"]}] },
+      "args": [{"stype": "ini", "args": ["const string&", "protocolpath", "jprotocolpath"]}] },
     { "base": {"stype":"()", "args": ["AnclientSettings", "\"jserv-album\""]} }
   ]
 }

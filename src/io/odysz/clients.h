@@ -160,7 +160,7 @@ inline SessionClient SessionClient::loginWithUri(const JServUrl &jserv, const st
 
     format_sessionReq(req, uid, pswd, device);
 
-    AnsonMsg<AnSessionReq> msg{Port::session};
+    AnsonMsg<AnSessionReq> msg{Port{Port::session}};
     msg.Body(req);
 
     AnSessionResp &rply = SessionClient::commit<AnSessionResp>(jserv, msg, err);

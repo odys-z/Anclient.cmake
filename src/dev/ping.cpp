@@ -6,6 +6,8 @@
  */
 #include <nlohmann/json.hpp>
 #include <entt/meta/meta.hpp>
+#include <QtQml/qjsvalue.h>
+
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/json.h>
 

@@ -8,9 +8,9 @@
 #include <entt/meta/factory.hpp>
 #include <nlohmann/json.hpp>
 
-#include <io/odysz/jprotocol.h>
+// #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
-#include <io/odysz/semantier.h>
+// #include <io/odysz/semantier.h>
 
 #include "io/odysz/jclient/syn.h"
 #include "io/odysz/gen/doctier.hpp"

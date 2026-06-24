@@ -1,13 +1,11 @@
 #pragma once
 
-// #include <io/odysz/jprotocol.h>
-// #include <vector>
-// #include <map>
+#include <qjsvalueiterator.h>
+#include <qobject.h>
 
 #include "../clients.h"
-
 #include "io/odysz/gen/doctier.hpp"
-
+#include "io/odysz/utils.h"
 
 namespace anson {
 
@@ -46,7 +44,7 @@ public:
         req.device = Device{page.device, "synode anclient.cmake test", "Ody@test"};
         req.a = DocsReq::A::selectSyncs;
 
-        AnsonMsg<DocsReq> q{Port::docstier};
+        AnsonMsg<DocsReq> q{Port{Port::docstier}};
         q.Body(req);
         q.Header(header);
 
@@ -66,15 +64,11 @@ public:
         // // PathsPage sync_page(device);
         // DocsReq reqbd{device, DocsReq::A::requestSyn};
 
-        // QJSValueIterator it(paths);
-        // while (it.hasNext()) {
-        //     it.next();
-        //     QString pth = it.name();
+        for (auto kv : paths) {
+            anlog(kv.first);
+        }
 
-        //     reqbd.syncingPage.append(pth.toStdString(), "synching");
 
-        //     onprc(pth, "synching");
-        // }
     }
 
 };

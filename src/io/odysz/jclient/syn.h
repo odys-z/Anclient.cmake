@@ -1,8 +1,5 @@
 #pragma once
 
-#include <qjsvalueiterator.h>
-#include <qobject.h>
-
 #include "../clients.h"
 #include "io/odysz/gen/doctier.hpp"
 #include "io/odysz/utils.h"

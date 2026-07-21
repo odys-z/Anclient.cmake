@@ -40,8 +40,11 @@ TEST(ANCLIENT, PING) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
-    JProtocol j{"jserv-sample"};
-    JServUrl jserv{"http://127.0.0.1:8080", j};
+    // JProtocol j{"jserv-sample"};
+    // JServUrl jserv{"http://127.0.0.1:8080", j};
+    JServUrl jserv{"http://127.0.0.1:8080/jserv-sample"};
+    JProtocol j = *jserv.jprotocol;
+    ASSERT_EQ("jserv-sample", j.protocolpath);
 
     Clients::if_verbose = true;
     AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);

@@ -45,10 +45,10 @@ public:
 
         string url{std::format("{}/{}", jserv.jserv(), req.port.url())};
         anlog(url);
-        if(verbose)
-            anlog(ssview.view());
-        else
-            andebug(ssview.view());
+        // if(verbose)
+        //     anlog(ssview.view());
+        // else
+        //     andebug(ssview.view());
 
         cpr::Response r = cpr::Post(
             cpr::Url{url},
@@ -89,8 +89,9 @@ public:
                 resp->Body(Rp());
             resp->body[0]->msg(r.error.message);
             err(MsgCode::Code::exIo, r.error.message, {});
-            throw std::system_error(std::make_error_code(std::errc::host_unreachable),
-                                    resp->Body().m);
+
+            // throw std::system_error(std::make_error_code(std::errc::host_unreachable), resp->Body().m);
+            throw AnsonException(resp->Body().m);
         }
     }
 
@@ -104,9 +105,21 @@ public:
     inline static SessionClient loginWithUri(const JServUrl &jserv, const string uri,
             const string uid, const string pswd, const string device, OnError err);
 
-    template<typename R>
-    R* userReq() {
-        return new R();
+    template<typename T> // T extends AnsonBody
+    inline static AnsonMsg<T> userReq(const AnsonHeader& header, const string& uri,
+                                      const JavaEnum& port, T& bodyItem, const vector<string>& act = {}) {
+        bodyItem.uri = uri;
+
+        AnsonMsg<T>msg{port};
+        msg.Header(header).Body(bodyItem);
+        msg.header.Act(act);
+        return msg;
+    }
+
+    template<typename T> // T extends AnsonBody
+    AnsonMsg<T> userReq(const string& uri,
+        const JavaEnum& port, T& bodyItem, const vector<string>& act = {}) {
+        return SessionClient::userReq<T>(header, uri, port, bodyItem, act);
     }
 };
 
@@ -168,7 +181,11 @@ inline SessionClient SessionClient::loginWithUri(const JServUrl &jserv, const st
     SessionClient client{jserv};
     client.ssInf = rply.ssInf;
     andebug(std::format("{}: {}", client.ssInf.ssid, client.ssInf.ssToken));
-    client.ssInf.ssToken = AESHelper2::repackSessionToken(client.ssInf.ssToken, pswd, uid);
+
+    string ssToken = AESHelper2::repackSessionToken(client.ssInf.ssToken, pswd, uid);
+
+    // Notes: A permanent ssToken is slightly different to the java implementation
+    client.header = AnsonHeader(uid, rply.ssInf.ssid, ssToken);
 
     return client;
 }
@@ -183,26 +200,4 @@ inline void SessionClient::format_sessionReq(AnSessionReq &req, const string uid
     req.iv = AESHelper2::encode64(iv);
     req.deviceId = device;
 }
-
-// class WSClient {
-
-// };
-
-// class Doclientier : public WSClient {
-
-//     string device;
-// public:
-//     Doclientier(string device) : device(device) {}
-
-//     void push_files(const map<string, vector<string>>& paths, OnProgress onprc) {
-//         DocsReq reqbd{device, DocsReq::A::requestSyn};
-//         for (auto& [pth, stas] : paths) {
-//             reqbd.syncingPage.append(pth, {ShareFlag::publish});
-//             onprc(pth, ShareFlag::pushing);
-//         }
-
-//         AnsonMsg<DocsReq> req{Port::docstier};
-//         req.Body(reqbd);
-//     }
-// };
 }

@@ -18,7 +18,7 @@ class Doclientier : public Semantier {
 public:
     string sysuri;
     const string synuri;
-    const Port port;
+    // const Port port;
     const string doctbl;
     const OnError & err;
 

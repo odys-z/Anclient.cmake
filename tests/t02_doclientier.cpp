@@ -62,19 +62,20 @@ TEST(Syncpage, Query) {
 
     aninfo(R"([Note 13 June 2026]
     To run this test,
-    start synode infor 17.1 (port 8957)
+    start synode at port 8957,
     setup )" + setting_json);
 
     AstMap asts;
     JsonOpt opts{&asts};
     register_jserv(asts, opts);
-    register_semantier(asts, "./");
+    register_semantier(asts, "ast/");
     register_doctier(asts, "ast/");
     register_anclientsettingsAst(asts);
 
     AnclientSettings settings;
     bool result = Anson::from_file(setting_json, settings);
     ASSERT_TRUE(result);
+    aninfo(std::format("synode {} : {} : {}", settings.jserv, settings.admin, settings.domain_token));
 
     PhotoMeta phm{"opaque to client"};
     JProtocol jprotocol;

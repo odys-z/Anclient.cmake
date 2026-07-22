@@ -34,7 +34,7 @@ TEST(ANCLIENT, PING) {
     JsonOpt opts{&enums};
     register_jserv(enums, opts);
     load_echoAst_ext(enums);
-    register_semantier(enums, "./");
+    register_semantier(enums, "ast/");
 
     OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
@@ -60,25 +60,32 @@ TEST(ANCLIENT, AnSESSION) {
     JsonOpt opts{&enums};
     register_jserv(enums, opts);
     load_echoAst_ext(enums);
-    register_semantier(enums, "./");
+    register_semantier(enums, "ast/");
 
     OnError errctx = [](MsgCode c, const string& e, const vector<string> &a) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
+    string myuri = "anclient.cmake";
     JProtocol j{"jserv-sample"};
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
-    SessionClient c = SessionClient::loginWithUri(jserv, "anclient.cmake", "ody", "123456", "cpp", errctx);
+    string plainkey = "123456";
+    SessionClient c = SessionClient::loginWithUri(jserv, myuri, "ody", plainkey, "cpp", errctx);
 
     ASSERT_EQ("ody", c.ssInf.uid);
     anlog("token: "s + c.ssInf.ssToken);
     ASSERT_EQ(2, LangExt::split(c.ssInf.ssToken, ':').size());
 
     vector<string_view> ss = LangExt::split(c.ssInf.ssToken, ':');
-    string knowledge = AESHelper2::decrypt(string{ss[0]}, "123456", AESHelper2::decode64(string{ss[1]}));
-    knowledge = LangExt::split(knowledge, ':')[1]; // What we got here is not the response of server, it's repacked token. So need decape the prefix
+    string knowledge = AESHelper2::decrypt(string{ss[0]}, plainkey, AESHelper2::decode64(string{ss[1]}));
+    knowledge = LangExt::split(knowledge, ':')[1]; // Not correct comments? What we got here is not the response of server, it's repacked token. So need decape the prefix
+    ASSERT_TRUE(AESHelper2::verifyToken(c.ssInf.ssToken, knowledge, "ody", plainkey));
 
-    ASSERT_TRUE(AESHelper2::verifyToken(c.ssInf.ssToken, knowledge, "ody", "123456"));
-
+    // Verify header token handling
+    c.openLink(myuri, errctx, 2001);
+    ASSERT_TRUE(c.heartbeating);
+    c.stopbeat();
+    this_thread::sleep_for(2400ms);
+    ASSERT_FALSE(c.heartbeating);
 }

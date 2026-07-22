@@ -2,16 +2,13 @@
 
 #include "../clients.h"
 #include "io/odysz/gen/doctier.hpp"
-#include "io/odysz/utils.h"
 
 namespace anson {
 
 class Semantier {
 public:
     std::string mtabl;
-
 };
-
 
 class Doclientier : public Semantier {
 
@@ -45,6 +42,8 @@ public:
         q.Body(req);
         q.Header(header);
 
+        req.pageInf.size = std::max(1, (int)page.clientPaths.size()); //page.end - page.start;
+
         DocsResp resp = client.commit<DocsResp>(q, err, true);
 
         return resp;
@@ -56,17 +55,13 @@ public:
         return this;
     }
 
-    void push_files(map<string, vector<string>> paths, OnProgress onprc) {
-
-        // // PathsPage sync_page(device);
-        // DocsReq reqbd{device, DocsReq::A::requestSyn};
-
-        for (auto kv : paths) {
-            anlog(kv.first);
-        }
-
-
-    }
+    // void push_files(map<string, vector<string>> paths, OnProgress onprc) {
+    //     // // PathsPage sync_page(device);
+    //     // DocsReq reqbd{device, DocsReq::A::requestSyn};
+    //     for (auto kv : paths) {
+    //         anlog(kv.first);
+    //     }
+    // }
 
 };
 

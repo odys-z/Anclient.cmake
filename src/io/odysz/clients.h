@@ -1,6 +1,6 @@
 #pragma once
 
-#include <functional>
+#include <thread>
 #include <string>
 #include <cpr/cpr.h>
 
@@ -19,7 +19,14 @@ namespace anson {
 
 class SessionClient {
 
+	bool stoplink;
+	string syncFlag;
+	AnsonMsg<HeartBeat> beatReq;
+	int msInterval;
+
 public:
+    bool heartbeating = true;
+
     JServUrl jserv;
 
     AnsonHeader header;
@@ -121,6 +128,33 @@ public:
         const JavaEnum& port, T& bodyItem, const vector<string>& act = {}) {
         return SessionClient::userReq<T>(header, uri, port, bodyItem, act);
     }
+
+    void stopbeat() { stoplink = true; }
+
+    SessionClient* openLink(const string& clientUri, const OnError& beat_err, int msInterv = 60000) {
+		// link
+		syncFlag = "link";
+		stoplink = false;
+
+        HeartBeat beat{clientUri, ssInf.ssid, ssInf.uid};
+        beatReq = AnsonMsg<HeartBeat>{Port{Port::heartbeat}};
+        beatReq .Header(ssInf)
+				.Body(beat);
+		
+		// msInterval = msInterv == null || msInterv.length < 1 ? 60000 : msInterv[0];
+        std::thread beat_thread([this, beat_err, msInterv]() {
+			int failed = 0;
+            heartbeating = true;
+            while (!stoplink) {
+                commit<AnsonResp>(beatReq, beat_err);
+                std::this_thread::sleep_for(std::chrono::milliseconds(std::min(2000, msInterv)));
+            }
+            heartbeating = false;
+		});
+        beat_thread.detach();
+		
+        return this;
+    }
 };
 
 class InsecureClient : public SessionClient {
@@ -183,9 +217,9 @@ inline SessionClient SessionClient::loginWithUri(const JServUrl &jserv, const st
     andebug(std::format("{}: {}", client.ssInf.ssid, client.ssInf.ssToken));
 
     string ssToken = AESHelper2::repackSessionToken(client.ssInf.ssToken, pswd, uid);
-
+    client.ssInf.ssToken = ssToken;
     // Notes: A permanent ssToken is slightly different to the java implementation
-    client.header = AnsonHeader(uid, rply.ssInf.ssid, ssToken);
+    // client.header = AnsonHeader(uid, rply.ssInf.ssid, ssToken);
 
     return client;
 }

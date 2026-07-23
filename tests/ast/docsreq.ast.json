@@ -24,7 +24,7 @@
     "synuri": {"dataAnclass": "java.lang.String"},
 	"docTabl": {"dataAnclass": "string"},
 	"doc": {"dataAnclass": "io.odysz.semantic.tier.docs.ExpSyncDoc"},
-	"pageInf": {"dataAnclass": "io.odysz.transact.sql.PageInf"},
+	"pageInf": {"dataAnclass": "io.odysz.transact.sql.PageInf "},
     "deletings": {"dataAnclass": "list<string"},
     "stamp": {"dataAnclass": "string"},
     "syncingPage": {"dataAnclass": "io.odysz.semantic.tier.docs.PathsPage"},
@@ -40,19 +40,17 @@
  	  { "base": { "stype": "()", "args": ["baseAnclass"] },
 	    "args": [{"stype": "", "args": ["const", "string", "&", "doctbl"]},
 	  			 {"stype": "", "args": ["const IFileDescriptor&", "p"]} ],
-		"body": [{"stype": "()", "args": ["format", "p"]}] },
+		"body": {"stype": "()", "args": ["format", "p"]} },
 
 	  { "base": {"stype": "()", "args": ["UserReq", "uri"]},
 	    "args": [{"stype": "", "args": ["AnsonMsg<AnsonBody>", "parent"]},
 				 {"stype": "ini", "args": ["const", "string", "uri", "synuri"]},
 	  			 {"stype": "", "args": ["const", "IFileDescriptor", "&", "p"]} ],
-		"body": [{"stype": "()", "args": ["format", "p", "uri"],
-				 "expect_result":  "void format(IFileDescriptor p, string uri)"},
-				 {"stype": "=", "args": ["AnsonBody::uri", "uri"]}] },
-	  { "base": {"stype": "()", "args": ["UserReq", "\"\""]},
+		"body": {"stype": "()", "args": ["format", "p", "uri"],
+				 "expect_result":  "void format(IFileDescriptor p, string uri)"} } ,
+	  { "base": {"stype": "()", "args": ["UserReq", "uri"]},
 		"args": [{"stype": "ini", "args": ["const string &", "docTabl", "docTabl"]},
 			  {"stype": "ini", "args": ["const ExpSyncDoc &", "doc", "doc"]},
-			  {"stype": "ini", "args": ["const string &", "uri", "synuri"]} ],
-		"body": [{"stype": "=", "args": ["AnsonBody::uri", "uri"]}] }
+			  {"stype": "ini", "args": ["const string &", "uri", "synuri"]} ]}
   ]
 }

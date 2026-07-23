@@ -15,6 +15,7 @@
 #include "io/odysz/gen/semantier.hpp"
 #include "io/odysz/semantier.h"
 #include "io/odysz/clients.h"
+#include "io/odysz/jclient/syn.h"
 
 using namespace std;
 using namespace std;
@@ -40,11 +41,8 @@ TEST(ANCLIENT, PING) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
-    // JProtocol j{"jserv-sample"};
-    // JServUrl jserv{"http://127.0.0.1:8080", j};
     JServUrl jserv{"http://127.0.0.1:8080/jserv-sample"};
-    JProtocol j = *jserv.jprotocol;
-    ASSERT_EQ("jserv-sample", j.protocolpath);
+    ASSERT_EQ("jserv-sample", jserv.jprotocol.protocolpath);
 
     Clients::if_verbose = true;
     AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);
@@ -71,8 +69,11 @@ TEST(ANCLIENT, AnSESSION) {
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
     string plainkey = "123456";
-    SessionClient c = SessionClient::loginWithUri(jserv, myuri, "ody", plainkey, "cpp", errctx);
+    Doclientier doclient{"h_photos", "sys", "syn", errctx};
+    anlog("1 ==================================================");
+    doclient.loginWithUri(jserv, "ody", plainkey, "test.device", errctx);
 
+    SessionClient c = doclient.client;
     ASSERT_EQ("ody", c.ssInf.uid);
     anlog("token: "s + c.ssInf.ssToken);
     ASSERT_EQ(2, LangExt::split(c.ssInf.ssToken, ':').size());
@@ -83,7 +84,10 @@ TEST(ANCLIENT, AnSESSION) {
     ASSERT_TRUE(AESHelper2::verifyToken(c.ssInf.ssToken, knowledge, "ody", plainkey));
 
     // Verify header token handling
+    anlog("2 ==================================================");
+    ASSERT_FALSE(c.heartbeating);
     c.openLink(myuri, errctx, 2001);
+    std::this_thread::sleep_for(3000ms);
     ASSERT_TRUE(c.heartbeating);
     c.stopbeat();
     this_thread::sleep_for(2400ms);

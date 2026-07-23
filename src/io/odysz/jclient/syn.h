@@ -21,7 +21,7 @@ public:
 
     SessionClient client;
 
-    Doclientier(const OnError& err) : client(JServUrl{"", {}}), err(err) {}
+    // Doclientier(const OnError& err) : client(JServUrl{"", {}}), err(err) {}
 
     Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnError& onerr)
         : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(JServUrl{"", {}}) {
@@ -51,7 +51,8 @@ public:
 
     inline Doclientier* loginWithUri(const JServUrl &jserv,
            const string& uid, const string& pswd, const string& device, const OnError& err) {
-        this->client = SessionClient::loginWithUri(jserv, sysuri, uid, pswd, device, err);
+        this->client.jserv = jserv;
+        SessionClient::loginWithUri(this->client, sysuri, uid, pswd, device, err);
         return this;
     }
 

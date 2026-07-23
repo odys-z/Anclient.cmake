@@ -25,7 +25,7 @@ class SessionClient {
 	int msInterval;
 
 public:
-    bool heartbeating = true;
+    bool heartbeating = false;
 
     JServUrl jserv;
 
@@ -82,11 +82,14 @@ public:
                     resp->Body(Rp()); // managed by shared_ptr
                 resp->body[0]->msg("Parsing response failed: " + r.text);
                 err(MsgCode::Code::exGeneral, r.error.message + "\n" + r.text, {});
-                throw SemanticException(resp->Body().m);
+                // throw SemanticException(resp->Body().m);
+                throw SemanticException("jserv: {}, act: {}, code: {}, msg: {}",
+                    url, req.Body().a, "exGeneral", resp->Body().m);
             }
             else if (resp->code != MsgCode::Code::ok) {
                 err(resp->code, {resp->Body().m}, {});
-                throw SemanticException(resp->Body().m);
+                throw SemanticException("jserv: {}, act: {}, code: {}, msg: {}",
+                    url, req.Body().a, MsgCode::to_string(resp->code), resp->Body().m);
             }
             return resp->Body();
         } else {
@@ -98,7 +101,9 @@ public:
             err(MsgCode::Code::exIo, r.error.message, {});
 
             // throw std::system_error(std::make_error_code(std::errc::host_unreachable), resp->Body().m);
-            throw AnsonException(resp->Body().m);
+            // throw AnsonException(resp->Body().m);
+            throw SemanticException("jserv: {}, act: {}, code: {}, msg: {}",
+                url, req.Body().a, "exIo", resp->Body().m);
         }
     }
 
@@ -109,7 +114,10 @@ public:
 
     inline static void format_sessionReq(AnSessionReq &req, const string uid, const string & pswd, const string &device);
 
-    inline static SessionClient loginWithUri(const JServUrl &jserv, const string uri,
+    /**
+     * Your session client must initialized with jserv: SessionClient client{jserv}
+     */
+    inline static SessionClient loginWithUri(SessionClient& client, const string uri,
             const string uid, const string pswd, const string device, OnError err);
 
     template<typename T> // T extends AnsonBody
@@ -144,10 +152,16 @@ public:
 		// msInterval = msInterv == null || msInterv.length < 1 ? 60000 : msInterv[0];
         std::thread beat_thread([this, beat_err, msInterv]() {
 			int failed = 0;
-            heartbeating = true;
             while (!stoplink) {
-                commit<AnsonResp>(beatReq, beat_err);
-                std::this_thread::sleep_for(std::chrono::milliseconds(std::min(2000, msInterv)));
+                try {
+                    commit<AnsonResp>(beatReq, beat_err);
+                    heartbeating = true;
+                }
+                catch (SemanticException e) {
+                    anwarn(e.what());
+                }
+                catch (runtime_error e) { anerror(e.what()); }
+                std::this_thread::sleep_for(std::chrono::milliseconds(std::max(2000, msInterv)));
             }
             heartbeating = false;
 		});
@@ -199,7 +213,7 @@ public:
     }
 };
 
-inline SessionClient SessionClient::loginWithUri(const JServUrl &jserv, const string uri,
+inline SessionClient SessionClient::loginWithUri(SessionClient& client, const string uri,
             const string uid, const string pswd, const string device, OnError err) {
 
     AnSessionReq req{};
@@ -210,9 +224,9 @@ inline SessionClient SessionClient::loginWithUri(const JServUrl &jserv, const st
     AnsonMsg<AnSessionReq> msg{Port{Port::session}};
     msg.Body(req);
 
-    AnSessionResp &rply = SessionClient::commit<AnSessionResp>(jserv, msg, err);
+    AnSessionResp &rply = SessionClient::commit<AnSessionResp>(client.jserv, msg, err);
 
-    SessionClient client{jserv};
+    // SessionClient client{jserv};
     client.ssInf = rply.ssInf;
     andebug(std::format("{}: {}", client.ssInf.ssid, client.ssInf.ssToken));
 

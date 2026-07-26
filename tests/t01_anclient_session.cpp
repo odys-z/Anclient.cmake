@@ -64,12 +64,14 @@ TEST(ANCLIENT, AnSESSION) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
+    OnLink onlink = [](const connect_state& newstate) {};
+
     string myuri = "anclient.cmake";
     JProtocol j{"jserv-sample"};
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
     string plainkey = "123456";
-    Doclientier doclient{"h_photos", "sys", "syn", errctx};
+    Doclientier doclient{"h_photos", "sys", "syn", onlink, errctx};
     anlog("1 ==================================================");
     doclient.loginWithUri(jserv, "ody", plainkey, "test.device", errctx);
 
@@ -86,7 +88,8 @@ TEST(ANCLIENT, AnSESSION) {
     // Verify header token handling
     anlog("2 ==================================================");
     ASSERT_FALSE(c.heartbeating);
-    c.openLink(myuri, [](const connect_state& newstate) {}, errctx, 2001);
+    /// c.openLink(myuri, [](const connect_state& newstate) {}, errctx, 2001);
+    c.openLink(myuri, 2001);
     std::this_thread::sleep_for(3000ms);
     ASSERT_TRUE(c.heartbeating);
     c.stopbeat();

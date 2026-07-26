@@ -42,6 +42,8 @@ class SessionClient {
 	AnsonMsg<HeartBeat> beatReq;
 	int msInterval;
 
+    const OnLink synlink_flipped;
+    const OnError beat_err;
 public:
     bool heartbeating = false;
 
@@ -51,7 +53,8 @@ public:
 
     SessionInf ssInf;
 
-    SessionClient(const JServUrl &jserv) : jserv(jserv) { }
+    SessionClient(const JServUrl &jserv, const OnLink& heartbeating, const OnError& heartbroken)
+        : jserv(jserv), synlink_flipped(heartbeating), beat_err(heartbroken) { }
 
     AnsonHeader Header() {
         if (LangExt::isblank(header.ssid)) {
@@ -89,7 +92,7 @@ public:
         AnsonMsg<Rp> *resp = new AnsonMsg<Rp>{};
 
         if (r.status_code == 201 || r.status_code == 200) { // 201 is 'Created'
-            std::cout << "Success!" << std::endl;
+            std::cout << "commit(): Success!" << std::endl;
             std::cout << "Response from server: " << r.text << std::endl;
 
             bool result = Anson::from_json(r.text, *resp);
@@ -157,7 +160,7 @@ public:
 
     void stopbeat() { stoplink = true; }
 
-    SessionClient* openLink(const string& clientUri, const OnLink& synlink_flip, const OnError& beat_err, int msInterv = 60000) {
+    SessionClient* openLink(const string& clientUri, int msInterv = 60000) {
 		// link
 		syncFlag = "link";
 		stoplink = false;
@@ -168,20 +171,23 @@ public:
 				.Body(beat);
 		
 		// msInterval = msInterv == null || msInterv.length < 1 ? 60000 : msInterv[0];
-        std::thread beat_thread([this, &synlink_flip, &beat_err, msInterv]() {
+        std::thread beat_thread([this, msInterv]() {
 			int failed = 0;
             while (!stoplink) {
                 try {
                     commit<AnsonResp>(beatReq, beat_err);
                     if (!heartbeating) {
+                        anlog("====================================================== link to synode: on");
                         heartbeating = true;
-                        synlink_flip({.synlink = connect_state::online});
+                        synlink_flipped({.synlink = connect_state::online});
                     }
                 }
                 catch (SemanticException e) {
                     if (heartbeating) {
+                        anlog("------------------------------------------------------ link to synode: off");
+                        heartbeating = true;
                         heartbeating = false;
-                        synlink_flip({.synlink = connect_state::offline});
+                        synlink_flipped({.synlink = connect_state::offline});
                     }
 
                     anwarn(e.what());
@@ -199,7 +205,8 @@ public:
 
 class InsecureClient : public SessionClient {
 public:
-    InsecureClient(const JServUrl &jserv) : SessionClient(jserv) {}
+    InsecureClient(const JServUrl &jserv)
+        : SessionClient(jserv, [](connect_state){}, [](MsgCode, const string&, const vector<string>&){}) {}
 };
 
 class Clients {

@@ -23,8 +23,17 @@ public:
 
     // Doclientier(const OnError& err) : client(JServUrl{"", {}}), err(err) {}
 
-    Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnError& onerr)
-        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(JServUrl{"", {}}) {
+    /**
+     * @brief Doclientier
+     * @param doctbl
+     * @param sysuri
+     * @param synuri
+     * @param onheartlink Design Memo: In c++, if this is provide by callback callers of openLink,
+     * the onlink call back can be a dangling prointer. So force the constructor requiring it for safety.
+     * @param onerr
+     */
+    Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnLink& onheartlink, const OnError& onerr)
+        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(JServUrl{"", {}}, onheartlink, onerr) {
     }
 
     DocsResp synQueryPathsPage(const PathsPage &page, Port port) {
@@ -55,15 +64,6 @@ public:
         SessionClient::loginWithUri(this->client, sysuri, uid, pswd, device, err);
         return this;
     }
-
-    // void push_files(map<string, vector<string>> paths, OnProgress onprc) {
-    //     // // PathsPage sync_page(device);
-    //     // DocsReq reqbd{device, DocsReq::A::requestSyn};
-    //     for (auto kv : paths) {
-    //         anlog(kv.first);
-    //     }
-    // }
-
 };
 
 }

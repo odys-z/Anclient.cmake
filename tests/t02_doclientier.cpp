@@ -93,7 +93,8 @@ TEST(Syncpage, Query) {
         anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
-    Doclientier doclient{phm.tbl, "/sys", "/syn", onErr};
+    OnLink onlink = [](const connect_state& newstate) {};
+    Doclientier doclient{phm.tbl, "/sys", "/syn", onlink,  onErr};
     doclient.loginWithUri(jserv, settings.admin, settings.domain_token, "cpp-test", onErr);
 
     SessionInf ssinf = doclient.client.ssInf;

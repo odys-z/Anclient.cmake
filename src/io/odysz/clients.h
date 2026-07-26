@@ -17,6 +17,24 @@ using namespace cpr;
 
 namespace anson {
 
+struct connect_state {
+    inline static const string online = "online";
+    inline static const string offline = "offline";
+    inline static const string login_failed = "x-login";
+    string synlink;
+
+    /** Not maintainced for now (0.1.0) */
+    string ipclink;
+
+    /** Not used for now (0.1.0) */
+    string registlink;
+
+    /** Synodes in domain. A future desing */
+    vector<string> synlinks;
+};
+
+using OnLink = std::function<void(connect_state)>;
+
 class SessionClient {
 
 	bool stoplink;
@@ -139,7 +157,7 @@ public:
 
     void stopbeat() { stoplink = true; }
 
-    SessionClient* openLink(const string& clientUri, const OnError& beat_err, int msInterv = 60000) {
+    SessionClient* openLink(const string& clientUri, const OnLink& synlink_flip, const OnError& beat_err, int msInterv = 60000) {
 		// link
 		syncFlag = "link";
 		stoplink = false;
@@ -150,14 +168,22 @@ public:
 				.Body(beat);
 		
 		// msInterval = msInterv == null || msInterv.length < 1 ? 60000 : msInterv[0];
-        std::thread beat_thread([this, beat_err, msInterv]() {
+        std::thread beat_thread([this, &synlink_flip, &beat_err, msInterv]() {
 			int failed = 0;
             while (!stoplink) {
                 try {
                     commit<AnsonResp>(beatReq, beat_err);
-                    heartbeating = true;
+                    if (!heartbeating) {
+                        heartbeating = true;
+                        synlink_flip({.synlink = connect_state::online});
+                    }
                 }
                 catch (SemanticException e) {
+                    if (heartbeating) {
+                        heartbeating = false;
+                        synlink_flip({.synlink = connect_state::offline});
+                    }
+
                     anwarn(e.what());
                 }
                 catch (runtime_error e) { anerror(e.what()); }
@@ -226,15 +252,11 @@ inline SessionClient SessionClient::loginWithUri(SessionClient& client, const st
 
     AnSessionResp &rply = SessionClient::commit<AnSessionResp>(client.jserv, msg, err);
 
-    // SessionClient client{jserv};
     client.ssInf = rply.ssInf;
     andebug(std::format("{}: {}", client.ssInf.ssid, client.ssInf.ssToken));
 
     string ssToken = AESHelper2::repackSessionToken(client.ssInf.ssToken, pswd, uid);
     client.ssInf.ssToken = ssToken;
-    // Notes: A permanent ssToken is slightly different to the java implementation
-    // client.header = AnsonHeader(uid, rply.ssInf.ssid, ssToken);
-
     return client;
 }
 

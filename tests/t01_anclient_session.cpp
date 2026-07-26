@@ -86,7 +86,7 @@ TEST(ANCLIENT, AnSESSION) {
     // Verify header token handling
     anlog("2 ==================================================");
     ASSERT_FALSE(c.heartbeating);
-    c.openLink(myuri, errctx, 2001);
+    c.openLink(myuri, [](const connect_state& newstate) {}, errctx, 2001);
     std::this_thread::sleep_for(3000ms);
     ASSERT_TRUE(c.heartbeating);
     c.stopbeat();

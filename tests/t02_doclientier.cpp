@@ -69,6 +69,13 @@ TEST(Syncpage, Query) {
     JsonOpt opts{&asts};
     register_jserv(asts, opts);
     register_semantier(asts, "ast/");
+
+    filesystem::path folder_path{"ast/"};
+    aninfo((folder_path/"docsreq.ast.json").string());
+    filesystem::path docreq_ast{folder_path/"docsreq.ast.json"};
+    ASSERT_EQ(".json", docreq_ast.extension());
+    ASSERT_TRUE(filesystem::exists(docreq_ast));
+
     register_doctier(asts, "ast/");
     register_anclientsettingsAst(asts);
 

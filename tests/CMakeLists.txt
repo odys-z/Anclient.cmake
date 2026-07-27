@@ -11,11 +11,11 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 add_executable(anclient_tests
+    io/odysz/semantic/meta.h
+    ../src/io/odysz/gen/anclient_settings.hpp
     t01_anclient_session.cpp
     t02_doclientier.cpp
-    io/odysz/semantic/meta.h
-    # io/oz/syn/test_gen.hpp
-    io/odysz/gen/anclient_settings.hpp
+    t03_translate.cpp
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD

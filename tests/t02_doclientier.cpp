@@ -16,7 +16,7 @@
 #include "io/odysz/gen/doctier.hpp"
 #include "io/odysz/semantic/meta.h"
 // #include "io/oz/syn/test_gen.hpp"
-#include "io/odysz/gen/anclient_settings.hpp"
+#include "../src/io/odysz/gen/anclient_settings.hpp"
 
 using namespace std;
 using namespace std;

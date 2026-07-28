@@ -1,0 +1,10 @@
+{ "type"       : "io.odysz.reflect.PeerSettings",
+  "ansonMsg"   : "io.odysz.semantic.jprotocol.AnsonMsg",
+  "ansons"     : ["reg-synode.ast.json", "reg-synode-config.ast.json"],
+  "scopeEnums" : [],
+  "javaEnums"  : [],
+  "ansonBody"  : "io.odysz.semantic.jprotocol.AnsonBody",
+  "anRequests" : ["registreq.ast.json", "registresp.ast.json"],
+  "cpp_include": [],
+  "cpp_gen"    : "../src/io/odysz/gen/registry.hpp"
+}

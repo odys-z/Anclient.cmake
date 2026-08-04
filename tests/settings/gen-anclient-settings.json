@@ -1,4 +1,5 @@
 { "type"       : "io.odysz.reflect.PeerSettings",
+  "tier_name"  : "anclient_cmake",
   "ansonMsg"   : "io.odysz.semantic.jprotocol.AnsonMsg",
   "ansons"     : ["anclient-settings.ast.json", "string-values.ast.json"],
   "scopeEnums" : [],

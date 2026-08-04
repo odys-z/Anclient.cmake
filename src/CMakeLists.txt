@@ -10,6 +10,7 @@ add_library(anclient INTERFACE
     io/odysz/gen/doctier.hpp
     io/odysz/gen/anclient_settings.hpp
     io/odysz/gen/semantier.hpp
+    io/odysz/gen/registry.hpp
     io/odysz/clients.h
     io/odysz/jclient/syn.h
     io/odysz/semantic/tier/docs.h

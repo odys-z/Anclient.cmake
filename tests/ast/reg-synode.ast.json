@@ -17,11 +17,11 @@
   "ctorsemantics": [
     { "base": {"stype":  "()"}},
     { "base": {"stype": "()"},
-      "args": [{"stype": "", "args": ["const string&", "id"]},
-               {"stype": "", "args": ["const string&", "synode0"]},
-               {"stype": "", "args": ["const string&", "devname"]}],
-      "body": [{"stype": "=", "args": ["id", "id"]},
-               {"stype": "=", "args": ["synode0", "synode0"]},
-               {"stype": "=", "args": ["devname", "devname"]}]}
+      "args": [{"stype": "ini", "args": ["const string&", "synid", "synid"]},
+               {"stype": "ini", "args": ["const string&", "synuid", "synuid"]},
+               {"stype": "ini", "args": ["const string&", "orgid", "org"]},
+               {"stype": "ini", "args": ["const string&", "domain", "domain"]},
+               {"stype": "ini", "args": ["const string&", "remark_hub", "remarks"]}]
+    }
   ]
 }

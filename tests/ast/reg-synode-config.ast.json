@@ -14,11 +14,10 @@
     "syncIns": {"dataAnclass": "float"},
     "chsize": {"dataAnclass": "int"}
   },
-  "ctorsemantics": [
+  "ctorsemantics": [{"base": {"stype": "()"}},
     { "base": {"stype": "()"},
-      "args": [{"stype": "ini", "args": ["const string&", "syni", "id"]},
-               {"stype": "ini", "args": ["const string&", "mode", "mode"]}
-              ]
+      "args": [{"stype": "ini", "args": ["const string&", "synid", "synid"]},
+               {"stype": "ini", "args": ["const string&", "mode", "mode"]}]
     }
   ]
 }

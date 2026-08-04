@@ -12,5 +12,9 @@
     "diction": {"dataAnclass": "io.oz.syn.registry.SynodeConfig"},
     "orgDomains": {"dataAnclass": "list<string"}
   },
-  "ctors": [[[], []]]
+  "ctorsemantics": [{"base": {"stype": "()"}},
+    { "base": {"stype": "()"},
+      "args": [{"stype": "ini", "args": ["const SynodeConfig&", "diction", "diction"]}]
+    }
+  ]
 }

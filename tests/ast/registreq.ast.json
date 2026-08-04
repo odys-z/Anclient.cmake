@@ -12,8 +12,13 @@
     "market": {"dataAnclass": "string"},
     "protocolPath": {"dataAnclass": "string"},
     "diction": {"dataAnclass": "io.oz.syn.registry.SynodeConfig"},
-    "myjserv_issue": {"dataAnclass": "io.odysz.semantic.jprotocol.JServUrl"},
+    "myjserv": {"dataAnclass": "io.odysz.semantic.jprotocol.JServUrl"},
     "mystate": {"dataAnclass": "string"}
   },
-  "ctors": [[[], []]]
+  "ctorsemantics": [
+    { "base": {"stype": "()"},
+      "args": [{"stype": "ini", "args": ["const JServUrl&", "jserv", "myjserv"]},
+               {"stype": "ini", "args": ["const SynodeConfig&", "diction", "diction"]}]
+    }
+  ]
 }

@@ -1,6 +1,7 @@
 { "type"       : "io.odysz.reflect.PeerSettings",
+  "tier_name"  : "centralclientier",
   "ansonMsg"   : "io.odysz.semantic.jprotocol.AnsonMsg",
-  "ansons"     : ["reg-synode.ast.json", "reg-synode-config.ast.json"],
+  "ansons"     : ["reg-synorg.ast.json", "reg-synode.ast.json", "reg-synode-config.ast.json"],
   "scopeEnums" : [],
   "javaEnums"  : [],
   "ansonBody"  : "io.odysz.semantic.jprotocol.AnsonBody",

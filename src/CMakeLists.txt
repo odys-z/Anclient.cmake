@@ -26,12 +26,12 @@ target_sources(anclient INTERFACE
         io/odysz/anson.h
 )
 
-target_include_directories(anson INTERFACE
+target_include_directories(anclient INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(anson INTERFACE
+target_link_libraries(anclient INTERFACE
     OpenSSL::Crypto OpenSSL::SSL
     EnTT::EnTT
     nlohmann_json::nlohmann_json

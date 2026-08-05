@@ -290,6 +290,23 @@ inline static void register_synodeconfigAst(AstMap & asts) {
         };
 }
 
+class Centralport : public anson::JavaEnum {
+public:
+    inline static const std::string _type_ = "io.oz.syn.registry.Centralport";
+
+    inline static const string heartbeat = "ping.serv";
+    inline static const string session = "login.serv";
+    inline static const string register_ = "regist.serv";
+    inline static const string menu = "menu.serv";
+
+    Centralport() : JavaEnum(_type_, "_sentinel_") {
+    }
+
+    Centralport(const string& enumval) : JavaEnum(_type_, enumval) {
+    }
+};
+
+
 class RegistReq : public anson::UserReq {
 public:
     inline static const std::string _type_ = "io.oz.syn.registry.RegistReq";
@@ -310,6 +327,9 @@ public:
     RegistReq(const JServUrl& jserv, const SynodeConfig& diction) : UserReq(), myjserv(jserv), diction(diction) {
         Type(_type_);
     }
+
+    // Default ctor is not found. Force a compile error here: io.oz.syn.registry.RegistReq RegistReq ()
+    RegistReq() : UserReq() { Type(_type_); }
 };
 
 inline static void load_registreqAst(AstMap &asts, const string &ast_path) {
@@ -402,6 +422,7 @@ inline static void register_centralclientier(AstMap &asts, const string &ast_fol
     register_synorgAst(asts);
     register_synodeAst(asts);
     register_synodeconfigAst(asts);
+    register_iport<Centralport>(asts, (folder_path / "centralport.ast.json").string());
     load_registreqAst(asts, (folder_path / "registreq.ast.json").string());
     load_registrespAst(asts, (folder_path / "registresp.ast.json").string());
 }

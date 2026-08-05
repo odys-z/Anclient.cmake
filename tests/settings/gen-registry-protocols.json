@@ -3,7 +3,7 @@
   "ansonMsg"   : "io.odysz.semantic.jprotocol.AnsonMsg",
   "ansons"     : ["reg-synorg.ast.json", "reg-synode.ast.json", "reg-synode-config.ast.json"],
   "scopeEnums" : [],
-  "javaEnums"  : [],
+  "javaEnums"  : ["centralport.ast.json"],
   "ansonBody"  : "io.odysz.semantic.jprotocol.AnsonBody",
   "anRequests" : ["registreq.ast.json", "registresp.ast.json"],
   "cpp_include": [],

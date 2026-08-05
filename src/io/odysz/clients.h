@@ -73,10 +73,6 @@ public:
 
         string url{std::format("{}/{}", jserv.jserv(), req.port.url())};
         anlog(url);
-        // if(verbose)
-        //     anlog(ssview.view());
-        // else
-        //     andebug(ssview.view());
 
         cpr::Response r = cpr::Post(
             cpr::Url{url},

@@ -25,13 +25,11 @@ using namespace anson;
 using namespace entt;
 using namespace entt::literals;
 
-/** See synode-7.10-template-instance.json for configuration */
-// string setting_json = "settings/synode-7.10-localhost-instance.json";
-
 /**
  * @brief Requires starting jserv-sample at localhost:8080 before running the test.
  */
 TEST(Registry, PING_Local) {
+    // See synode-7.10-template-instance.json for configuration
     string setting_json = "settings/synode-7.10-localhost-instance.json";
 
     AstMap asts;
@@ -57,6 +55,7 @@ TEST(Registry, PING_Local) {
 }
 
 TEST(Registry, PING_Central) {
+    // See synode-7.10-template-instance.json for configuration
     string setting_json = "settings/synode-7.10-reddish-instance.json";
 
     AstMap asts;

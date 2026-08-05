@@ -230,11 +230,12 @@ public:
      * @issue The server siede, echo-tier, cannot return resp.body.data of type map<string, list<string/VarType.
      */
     inline static AnsonResp pingLess(const JServUrl &jserv,
-            const string &uri, const string &msg, OnError err=Clients::err) {
+            const string &uri, const string &msg, OnError err=Clients::err, const string a = EchoReq::A::inet) {
 
         EchoReq req;
         req.echo = msg;
-        req.a = EchoReq::A::inet;
+        // req.a = EchoReq::A::inet;
+        req.a = a; // EchoReq::A::inet;
         anlog("[Clinet.pingLess.body] "s + req.toBlock());
 
         AnsonMsg<EchoReq> anmsg(Port(Port::echo), req);

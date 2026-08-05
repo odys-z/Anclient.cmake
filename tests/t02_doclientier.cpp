@@ -8,14 +8,11 @@
 #include <entt/meta/factory.hpp>
 #include <nlohmann/json.hpp>
 
-// #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
-// #include <io/odysz/semantier.h>
 
 #include "io/odysz/jclient/syn.h"
 #include "io/odysz/gen/doctier.hpp"
 #include "io/odysz/semantic/meta.h"
-// #include "io/oz/syn/test_gen.hpp"
 #include "../src/io/odysz/gen/anclient_settings.hpp"
 
 using namespace std;
@@ -57,9 +54,10 @@ void ExpSyncDoc::format(const AnResultset & rs) {}
 void DocsReq::format(const IFileDescriptor &, const string) {}
 }
 
-TEST(Syncpage, Query) {
-    string setting_json = "settings/synode-7.10-reddish-instance.json";
+/** See synode-7.10-template-instance.json for configuration */
+string setting_json = "settings/synode-7.10-reddish-instance.json";
 
+TEST(Syncpage, Query) {
     aninfo(R"([Note 13 June 2026]
     To run this test,
     start synode at port 8957,
@@ -94,7 +92,7 @@ TEST(Syncpage, Query) {
     };
 
     OnLink onlink = [](const connect_state& newstate) {};
-    Doclientier doclient{phm.tbl, "/sys", "/syn", onlink,  onErr};
+    Doclientier doclient{phm.tbl, "/sys", "/syn", onlink, onErr};
     doclient.loginWithUri(jserv, settings.admin, settings.domain_token, "cpp-test", onErr);
 
     SessionInf ssinf = doclient.client.ssInf;

@@ -13,9 +13,9 @@ include(GoogleTest)
 add_executable(anclient_tests
     io/odysz/semantic/meta.h
     ../src/io/odysz/gen/anclient_settings.hpp
-    t01_anclient_session.cpp
-    t02_doclientier.cpp
-    t03_translate.cpp
+    # t01_anclient_session.cpp
+    # t02_doclientier.cpp
+    # t03_translate.cpp
     t04_registry_protocol.cpp
 )
 

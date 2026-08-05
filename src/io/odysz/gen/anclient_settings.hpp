@@ -161,7 +161,7 @@ inline static void register_stringvaluesAst(AstMap & asts) {
         };
 }
 
-inline static void register_None(AstMap &asts, const string &ast_folder) {
+inline static void register_anclient_cmake(AstMap &asts, const string &ast_folder) {
     filesystem::path folder_path{ast_folder};
     register_anclientsettingsAst(asts);
     register_stringvaluesAst(asts);

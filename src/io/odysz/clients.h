@@ -47,6 +47,10 @@ class SessionClient {
 public:
     bool heartbeating = false;
 
+    /**
+     * @brief jserv with jprotocol instance.
+     * A client has it's own protocol knowledge, rather than share protocol semantics across links.
+     */
     JServUrl jserv;
 
     AnsonHeader header;
@@ -64,10 +68,10 @@ public:
     }
 
     template<typename Rp, typename R>
-    static Rp& commit(const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
+    static Rp& commit(const JsonOpt* ctx_ptr, const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
 
         std::stringstream ss;
-        req.toBlock(ss, *IJsonable::contxt_ptr); // FIXME performance problem
+        req.toBlock(ss, *ctx_ptr); // FIXME performance problem
 
         stringstream ssview = std::move(ss);
 
@@ -91,7 +95,7 @@ public:
             std::cout << "commit(): Success!" << std::endl;
             std::cout << "Response from server: " << r.text << std::endl;
 
-            bool result = Anson::from_json(r.text, *resp);
+            bool result = Anson::from_json(r.text, *resp, ctx_ptr);
 
             if (!result) {
                 resp->Code(MsgCode::Code::exGeneral);
@@ -126,7 +130,7 @@ public:
 
     template<typename Rp, typename R>
     Rp& commit(AnsonMsg<R> &req, const OnError &err, bool if_verbose = false) {
-        return SessionClient::commit<Rp, R>(jserv, req, err, if_verbose);
+        return SessionClient::commit<Rp, R>(jserv.jprotocol.ctx, jserv, req, err, if_verbose);
     }
 
     inline static void format_sessionReq(AnSessionReq &req, const string uid, const string & pswd, const string &device);
@@ -134,8 +138,8 @@ public:
     /**
      * Your session client must initialized with jserv: SessionClient client{jserv}
      */
-    inline static SessionClient loginWithUri(SessionClient& client, const string uri,
-            const string uid, const string pswd, const string device, OnError err);
+    inline void loginWithUri(const string uri, const string uid,
+                                             const string pswd, const string device, OnError err);
 
     template<typename T> // T extends AnsonBody
     inline static AnsonMsg<T> userReq(const AnsonHeader& header, const string& uri,
@@ -173,14 +177,14 @@ public:
                 try {
                     commit<AnsonResp>(beatReq, beat_err);
                     if (!heartbeating) {
-                        anlog("====================================================== link to synode: on");
+                        anlog("====================================================== link to synode: turn-on");
                         heartbeating = true;
                         synlink_flipped({.synlink = connect_state::online});
                     }
                 }
                 catch (SemanticException e) {
                     if (heartbeating) {
-                        anlog("------------------------------------------------------ link to synode: off");
+                        anlog("------------------------------------------------------ link to synode: down");
                         heartbeating = true;
                         heartbeating = false;
                         synlink_flipped({.synlink = connect_state::offline});
@@ -206,7 +210,7 @@ public:
 };
 
 class Clients {
-    inline static JProtocol protocol;
+    // const JProtocol* protocol;
 
 public:
     inline static bool if_verbose;
@@ -232,7 +236,7 @@ public:
         req.echo = msg;
         // req.a = EchoReq::A::inet;
         req.a = a; // EchoReq::A::inet;
-        anlog("[Clinet.pingLess.body] "s + req.toBlock());
+        anlog("[Clinet.pingLess.body] "s + req.toBlock(*jserv.jprotocol.ctx));
 
         AnsonMsg<EchoReq> anmsg(Port(Port::echo), req);
 
@@ -243,8 +247,8 @@ public:
     }
 };
 
-inline SessionClient SessionClient::loginWithUri(SessionClient& client, const string uri,
-            const string uid, const string pswd, const string device, OnError err) {
+inline void SessionClient::loginWithUri(const string uri, const string uid,
+                    const string pswd, const string device, OnError err) {
 
     AnSessionReq req{};
     req.uri = uri;
@@ -254,14 +258,14 @@ inline SessionClient SessionClient::loginWithUri(SessionClient& client, const st
     AnsonMsg<AnSessionReq> msg{Port{Port::session}};
     msg.Body(req);
 
-    AnSessionResp &rply = SessionClient::commit<AnSessionResp>(client.jserv, msg, err);
+    // AnSessionResp &rply = SessionClient::commit<AnSessionResp>(client.jserv, msg, err);
+    AnSessionResp &rply = commit<AnSessionResp>(msg, err);
 
-    client.ssInf = rply.ssInf;
-    andebug(std::format("{}: {}", client.ssInf.ssid, client.ssInf.ssToken));
+    this->ssInf = rply.ssInf;
+    andebug(std::format("{}: {}", ssInf.ssid, ssInf.ssToken));
 
-    string ssToken = AESHelper2::repackSessionToken(client.ssInf.ssToken, pswd, uid);
-    client.ssInf.ssToken = ssToken;
-    return client;
+    string ssToken = AESHelper2::repackSessionToken(ssInf.ssToken, pswd, uid);
+    ssInf.ssToken = ssToken;
 }
 
 inline void SessionClient::format_sessionReq(AnSessionReq &req, const string uid,

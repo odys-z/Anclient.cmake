@@ -5,18 +5,16 @@
     "sysuri": {"dataAnclass": "string"},
     "synuri": {"dataAnclass": "string"},
     "jserv" : {"dataAnclass": "string"},
-    "jprotocolpath": {"dataAnclass": "string"},
-    "readonly_test": {"dataAnclass": "bool"},
+    "org"   : {"dataAnclass": "string"},
     "domain": {"dataAnclass": "string"},
+    "device": {"dataAnclass": "string"},
     "admin" : {"dataAnclass": "string"},
     "domain_token" : {"dataAnclass": "string"},
     "regiserv"     : {"dataAnclass": "string"},
-    "regiprotopath": {"dataAnclass": "string"},
-    "centralPswd"  : {"dataAnclass": "string"}
+    "centralPswd"  : {"dataAnclass": "string"},
+    "temp_dir"     : {"dataAnclass": "string"}
   },
   "ctorsemantics": [
-    { "base": {},
-      "args": [{"stype": "ini", "args": ["const string&", "protocolpath", "jprotocolpath"]}] },
-    { "base": {"stype":"()", "args": ["AnclientSettings", "\"jserv-album\""]} }
+    { "base": {} }
   ]
 }

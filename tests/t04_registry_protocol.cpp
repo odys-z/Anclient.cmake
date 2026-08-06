@@ -45,7 +45,7 @@ TEST(Registry, PING_Local) {
     AnclientSettings settings;
     Anson::from_file(setting_json, settings);
 
-    JServUrl jserv{settings.regiserv};
+    JServUrl jserv{settings.regiserv, &opts};
     ASSERT_EQ("regist-central", jserv.jprotocol.protocolpath);
 
     Clients::if_verbose = true;
@@ -71,7 +71,7 @@ TEST(Registry, PING_Central) {
     AnclientSettings settings;
     Anson::from_file(setting_json, settings);
 
-    JServUrl jserv{settings.regiserv};
+    JServUrl jserv{settings.regiserv, &opts};
     ASSERT_EQ("regist-alpha", jserv.jprotocol.protocolpath);
 
     Clients::if_verbose = true;

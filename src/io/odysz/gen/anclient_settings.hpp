@@ -18,20 +18,17 @@ public:
     string sysuri;
     string synuri;
     string jserv;
-    string jprotocolpath;
-    bool readonly_test;
+    string org;
     string domain;
+    string device;
     string admin;
     string domain_token;
     string regiserv;
-    string regiprotopath;
     string centralPswd;
+    string temp_dir;
 
-    AnclientSettings(const string& protocolpath) : jprotocolpath(protocolpath) {
+    AnclientSettings() {
         Type(_type_);
-    }
-
-    AnclientSettings() : AnclientSettings("jserv-album") {
     }
 };
 
@@ -42,33 +39,32 @@ inline static void register_anclientsettingsAst(AstMap & asts) {
         {"sysuri", {.dataAnclass="string"} },
         {"synuri", {.dataAnclass="string"} },
         {"jserv", {.dataAnclass="string"} },
-        {"jprotocolpath", {.dataAnclass="string"} },
-        {"readonly_test", {.dataAnclass="bool"} },
+        {"org", {.dataAnclass="string"} },
         {"domain", {.dataAnclass="string"} },
+        {"device", {.dataAnclass="string"} },
         {"admin", {.dataAnclass="string"} },
         {"domain_token", {.dataAnclass="string"} },
         {"regiserv", {.dataAnclass="string"} },
-        {"regiprotopath", {.dataAnclass="string"} },
         {"centralPswd", {.dataAnclass="string"} },
+        {"temp_dir", {.dataAnclass="string"} },
        });
 
     entt::meta_factory <anson::AnclientSettings> ()
         .type(ast->enttypeid)
         .base<Anson>()
-        .ctor<const string&>()
         .ctor<>()
 
         .data<&anson::AnclientSettings::sysuri>("sysuri")
         .data<&anson::AnclientSettings::synuri>("synuri")
         .data<&anson::AnclientSettings::jserv>("jserv")
-        .data<&anson::AnclientSettings::jprotocolpath>("jprotocolpath")
-        .data<&anson::AnclientSettings::readonly_test>("readonly_test")
+        .data<&anson::AnclientSettings::org>("org")
         .data<&anson::AnclientSettings::domain>("domain")
+        .data<&anson::AnclientSettings::device>("device")
         .data<&anson::AnclientSettings::admin>("admin")
         .data<&anson::AnclientSettings::domain_token>("domain_token")
         .data<&anson::AnclientSettings::regiserv>("regiserv")
-        .data<&anson::AnclientSettings::regiprotopath>("regiprotopath")
         .data<&anson::AnclientSettings::centralPswd>("centralPswd")
+        .data<&anson::AnclientSettings::temp_dir>("temp_dir")
         ;
 
         //
@@ -81,22 +77,22 @@ inline static void register_anclientsettingsAst(AstMap & asts) {
                     return entt::forward_as_meta(concrete.synuri);
                 if ("jserv" == fieldname)
                     return entt::forward_as_meta(concrete.jserv);
-                if ("jprotocolpath" == fieldname)
-                    return entt::forward_as_meta(concrete.jprotocolpath);
-                if ("readonly_test" == fieldname)
-                    return entt::forward_as_meta(concrete.readonly_test);
+                if ("org" == fieldname)
+                    return entt::forward_as_meta(concrete.org);
                 if ("domain" == fieldname)
                     return entt::forward_as_meta(concrete.domain);
+                if ("device" == fieldname)
+                    return entt::forward_as_meta(concrete.device);
                 if ("admin" == fieldname)
                     return entt::forward_as_meta(concrete.admin);
                 if ("domain_token" == fieldname)
                     return entt::forward_as_meta(concrete.domain_token);
                 if ("regiserv" == fieldname)
                     return entt::forward_as_meta(concrete.regiserv);
-                if ("regiprotopath" == fieldname)
-                    return entt::forward_as_meta(concrete.regiprotopath);
                 if ("centralPswd" == fieldname)
                     return entt::forward_as_meta(concrete.centralPswd);
+                if ("temp_dir" == fieldname)
+                    return entt::forward_as_meta(concrete.temp_dir);
             }
 
             if (IJsonable::contxt_ptr->has_ast(ast->baseAnclass)) {

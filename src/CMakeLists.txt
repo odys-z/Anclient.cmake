@@ -47,5 +47,5 @@ if(ANCLIENT_BUILD_TESTS)
         dev/ping.cpp
         io/odysz/jclient/syn.h
     )
-    target_link_libraries(anclient_clangd_helper PRIVATE anson)
+    target_link_libraries(anclient_clangd_helper PRIVATE anson anclient)
 endif()

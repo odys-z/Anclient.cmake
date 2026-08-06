@@ -25,35 +25,36 @@ using namespace anson;
 using namespace entt;
 using namespace entt::literals;
 
+/** Start up regist-jserv at port 1900 (synode-7.10-...-instance.json/regiserv */
 TEST(PROTOCOL_SETS, Double_PING) {
     // See synode-7.10-template-instance.json for configuration
-    string setting_json = "settings/synode-7.10-localhost-instance.json";
-    // string setting_json = "settings/synode-7.10-reddish-instance.json";
+    string sets_local = "settings/synode-7.10-localhost-instance.json";
+    string sets_centr = "settings/synode-7.10-reddish-instance.json";
 
-    AstMap syn_asts;
-    JsonOpt syn_opts{&syn_asts};
-    register_jserv(syn_asts, syn_opts);
-    register_anclient_cmake(syn_asts, "ast/");
-    register_semantier(syn_asts, "ast/");
+    AstMap local_asts;
+    JsonOpt local_opts{&local_asts};
+    register_jserv(local_asts, local_opts);
+    register_anclient_cmake(local_asts, "ast/");
+    register_semantier(local_asts, "ast/");
 
-    AstMap reg_asts;
-    JsonOpt reg_opts{&reg_asts};
-    register_jserv(reg_asts, reg_opts);
-    register_anclient_cmake(reg_asts, "ast/");
-    register_centralclientier(reg_asts, "ast/");
+    AstMap centr_asts;
+    JsonOpt centr_opts{&centr_asts};
+    register_jserv(centr_asts, centr_opts);
+    register_anclient_cmake(centr_asts, "ast/");
+    register_centralclientier(centr_asts, "ast/");
 
     OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
     AnclientSettings settings;
-    Anson::from_file(setting_json, settings);
+    Anson::from_file(sets_local, settings);
 
-    JServUrl jserv{settings.regiserv};
-    ASSERT_EQ("regist-central", jserv.jprotocol.protocolpath);
+    JServUrl local_jserv{settings.regiserv, &local_opts};
+    ASSERT_EQ("regist-central", local_jserv.jprotocol.protocolpath);
 
     Clients::if_verbose = true;
-    AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);
+    AnsonResp resp = Clients::pingLess(local_jserv, "Anson.cmake/test", "TEST Echo...", errctx);
 
     ASSERT_EQ("TEST Echo...", resp.m);
 }

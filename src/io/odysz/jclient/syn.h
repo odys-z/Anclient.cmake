@@ -1,7 +1,11 @@
 #pragma once
 
 #include "../clients.h"
+#include "io/odysz/gen/anclient_settings.hpp"
 #include "io/odysz/gen/doctier.hpp"
+#include "io/odysz/gen/registry.hpp"
+
+#include <io/odysz/gen/registry.hpp>
 
 namespace anson {
 
@@ -11,17 +15,13 @@ public:
 };
 
 class Doclientier : public Semantier {
-
 public:
     string sysuri;
     const string synuri;
-    // const Port port;
     const string doctbl;
     const OnError & err;
 
     SessionClient client;
-
-    // Doclientier(const OnError& err) : client(JServUrl{"", {}}), err(err) {}
 
     /**
      * @brief Doclientier
@@ -61,8 +61,132 @@ public:
     inline Doclientier* loginWithUri(const JServUrl &jserv,
            const string& uid, const string& pswd, const string& device, const OnError& err) {
         this->client.jserv = jserv;
-        SessionClient::loginWithUri(this->client, sysuri, uid, pswd, device, err);
+        this->client.loginWithUri(sysuri, uid, pswd, device, err);
         return this;
+    }
+};
+
+class RegistryClient : public SessionClient {
+public:
+    string market;
+    string orgid;
+    string orgname;
+
+    string settings_json;
+    AnclientSettings& appsettings;
+    SynodeConfig& syncfg;
+
+    RegistryClient(AnclientSettings& settings, const JServUrl& jserv, SynodeConfig &selfnode_cfg, const OnLink& onbeat, const OnError& errctx)
+        : SessionClient(jserv, onbeat, errctx), appsettings(settings), syncfg(selfnode_cfg) {}
+
+    OnError onErr;
+
+    /** A::queryDomConfig */
+    void asyquery_orgdoms(const string & org, const OnOk& ok, const OnError& err) {
+      std::thread query_thread([this, &org, &ok, &err]() {
+        if (LangExt::isblank(ssInf.ssid)) {
+            loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
+                         this->appsettings.centralPswd, this->appsettings.device, err);
+        }
+
+        if (!heartbeating) {
+            openLink(appsettings.sysuri);
+        }
+
+        if (LangExt::isblank(ssInf.ssid)) {
+            anwarn("Cannot login to "s + this->jserv.jserv());
+            return;
+        }
+
+        header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomx, "query sync");
+
+        RegistReq req;
+        SynodeConfig dict;
+        dict.org.orgId = orgid;
+        dict.org.orgName = orgname;
+
+        req.a = RegistReq::A::queryDomx;
+        req.market = market;
+        req.diction = dict;
+
+        anlog("=========================\n"s + ssInf.toBlock());
+        AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{Centralport::regist}, req)
+                                .Header(ssInf);
+        anlog("=========================\n"s + q.toBlock());
+
+        try {
+            anlog(q.toBlock(*jserv.jprotocol.ctx));
+            RegistResp resp = commit<RegistResp>(q, err);
+            ok(resp);
+        }
+        catch (const SemanticException& e) {
+            anerror(e.what());
+        }
+        catch (const AnsonException& e) {
+            anerror(e.what());
+        }
+        catch (const std::exception& e) {
+            anerror(e.what());
+        }
+        catch (...) {
+            anerror("Caught unknown exception.");
+        }
+        });
+      query_thread.detach();
+    }
+
+    void asyquery_domconfig(const string & org, const string& domid, const OnOk& ok, const OnError& err) {
+        std::thread query_thread([this, &org, &ok, &err, &domid]() {
+            if (LangExt::isblank(ssInf.ssid)) {
+                loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
+                             this->appsettings.centralPswd, this->appsettings.device, err);
+            }
+
+            if (!heartbeating) {
+                openLink(appsettings.sysuri);
+            }
+
+            if (LangExt::isblank(ssInf.ssid)) {
+                anwarn("Cannot login to "s + this->jserv.jserv());
+                return;
+            }
+
+            header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomConfig, "query sync");
+
+            RegistReq req;
+            SynodeConfig dict;
+            dict.org.orgId = orgid;
+            dict.org.orgName = orgname;
+            dict.domain = domid;
+
+            req.a = RegistReq::A::queryDomConfig;
+            req.market = market;
+            req.diction = dict;
+
+            anlog("=========================\n"s + ssInf.toBlock());
+            AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{Centralport::regist}, req)
+                                        .Header(ssInf);
+            anlog("=========================\n"s + q.toBlock());
+
+            try {
+                anlog(q.toBlock(*jserv.jprotocol.ctx));
+                RegistResp resp = commit<RegistResp>(q, err);
+                ok(resp);
+            }
+            catch (const SemanticException& e) {
+                anerror(e.what());
+            }
+            catch (const AnsonException& e) {
+                anerror(e.what());
+            }
+            catch (const std::exception& e) {
+                anerror(e.what());
+            }
+            catch (...) {
+                anerror("Caught unknown exception.");
+            }
+        });
+        query_thread.detach();
     }
 };
 

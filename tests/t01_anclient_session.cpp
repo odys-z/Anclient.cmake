@@ -41,7 +41,7 @@ TEST(ANCLIENT, PING) {
         anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
     };
 
-    JServUrl jserv{"http://127.0.0.1:8080/jserv-sample"};
+    JServUrl jserv{"http://127.0.0.1:8080/jserv-sample", &opts};
     ASSERT_EQ("jserv-sample", jserv.jprotocol.protocolpath);
 
     Clients::if_verbose = true;
@@ -67,7 +67,7 @@ TEST(ANCLIENT, AnSESSION) {
     OnLink onlink = [](const connect_state& newstate) {};
 
     string myuri = "anclient.cmake";
-    JProtocol j{"jserv-sample"};
+    JProtocol j{"jserv-sample", &opts};
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
     string plainkey = "123456";

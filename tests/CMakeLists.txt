@@ -13,11 +13,12 @@ include(GoogleTest)
 add_executable(anclient_tests
     io/odysz/semantic/meta.h
     ../src/io/odysz/gen/anclient_settings.hpp
-    # t01_anclient_session.cpp
-    # t02_doclientier.cpp
-    # t03_translate.cpp
-    # t04_registry_protocol.cpp
+    t01_anclient_session.cpp
+    t02_doclientier.cpp
+    t03_translate.cpp
+    t04_registry_protocol.cpp
     t05_2sets_protocol.cpp
+    t06_query_registry.cpp
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD

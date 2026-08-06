@@ -83,8 +83,8 @@ TEST(Syncpage, Query) {
     aninfo(std::format("synode {} : {} : {}", settings.jserv, settings.admin, settings.domain_token));
 
     PhotoMeta phm{"opaque to client"};
-    JProtocol jprotocol;
-    jprotocol.setup(settings.jprotocolpath, Port::docstier);
+    JProtocol jprotocol{"jserv-album", &opts};
+    // jprotocol.setup(settings.jprotocolpath, Port::docstier);
     JServUrl jserv{settings.jserv, jprotocol};
 
     OnError onErr = [](MsgCode c, const string &e, const vector<string> &a) {

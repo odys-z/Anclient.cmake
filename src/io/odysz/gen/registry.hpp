@@ -296,7 +296,7 @@ public:
 
     inline static const string heartbeat = "ping.serv";
     inline static const string session = "login.serv";
-    inline static const string register_ = "regist.serv";
+    inline static const string regist = "regist.serv";
     inline static const string menu = "menu.serv";
 
     Centralport() : JavaEnum(_type_, "_sentinel_") {
@@ -328,7 +328,7 @@ public:
         Type(_type_);
     }
 
-    // Default ctor is not found. Force a compile error here: io.oz.syn.registry.RegistReq RegistReq ()
+    // No default ctor is not found. Force a compile error here: io.oz.syn.registry.RegistReq RegistReq ()
     RegistReq() : UserReq() { Type(_type_); }
 };
 

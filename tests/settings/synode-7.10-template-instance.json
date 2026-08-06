@@ -1,10 +1,14 @@
 { "type": "io.odysz.gen.AnclientSettings",
-  "protocolpath": "jserv-album",
-  "jserv": "http://localhost:port/jserv-album",
-  "domain": "domain id",
-  "admin": "admin",
-  "domain_token": "************",
+  "jserv"       : "http://localhost:88888/jserv-album",
+  "org"         : "=============",
+  "domain"      : "-------------",
+  "admin"       : "admin",
+  "domain_token": "*************",
 
-  "regiserv": "http://host:port/regist-alpha",
-  "centralPswd": "************"
+  "regiserv"    : "http://localhost:99999/regist-central",
+  "centralPswd" : "*************",
+
+  "device"      : "test",
+  "synuri"      : "/syn",
+  "sysuri"      : "/sys"
 }

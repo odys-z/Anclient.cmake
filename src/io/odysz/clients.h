@@ -139,7 +139,7 @@ public:
      * Your session client must initialized with jserv: SessionClient client{jserv}
      */
     inline void loginWithUri(const string uri, const string uid,
-                                             const string pswd, const string device, OnError err);
+                             const string pswd, const string device, OnError err) ;
 
     template<typename T> // T extends AnsonBody
     inline static AnsonMsg<T> userReq(const AnsonHeader& header, const string& uri,
@@ -160,7 +160,7 @@ public:
 
     void stopbeat() { stoplink = true; }
 
-    SessionClient* openLink(const string& clientUri, int msInterv = 60000) {
+    SessionClient* openLink(const string& clientUri, int msInterv = 60000) noexcept {
 		// link
 		syncFlag = "link";
 		stoplink = false;

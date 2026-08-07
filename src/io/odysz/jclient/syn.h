@@ -74,10 +74,10 @@ public:
 
     string settings_json;
     AnclientSettings& appsettings;
-    SynodeConfig& syncfg;
+    // SynodeConfig& syncfg;
 
-    RegistryClient(AnclientSettings& settings, const JServUrl& jserv, SynodeConfig &selfnode_cfg, const OnLink& onbeat, const OnError& errctx)
-        : SessionClient(jserv, onbeat, errctx), appsettings(settings), syncfg(selfnode_cfg) {}
+    RegistryClient(AnclientSettings& settings, const JServUrl& jserv, const OnLink& onbeat, const OnError& errctx)
+        : SessionClient(jserv, onbeat, errctx), appsettings(settings) {}
 
     OnError onErr;
 

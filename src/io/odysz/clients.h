@@ -67,6 +67,12 @@ public:
         return header;
     }
 
+    SessionClient* setjserv(const string& url) {
+        jserv.force_update_protocol(url);
+        anlog("Now jserv: "s + jserv.jserv());
+        return this;
+    }
+
     template<typename Rp, typename R>
     static Rp& commit(const JsonOpt* ctx_ptr, const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
 

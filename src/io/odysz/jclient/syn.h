@@ -74,7 +74,6 @@ public:
 
     string settings_json;
     AnclientSettings& appsettings;
-    // SynodeConfig& syncfg;
 
     RegistryClient(AnclientSettings& settings, const JServUrl& jserv, const OnLink& onbeat, const OnError& errctx)
         : SessionClient(jserv, onbeat, errctx), appsettings(settings) {}
@@ -86,6 +85,7 @@ public:
       std::thread query_thread([this, &org, &ok, &err]() {
         try {
             anlog(ssInf.toBlock(*jserv.jprotocol.ctx));
+            anlog(jserv.jserv());
             if (LangExt::isblank(ssInf.ssid)) {
                 loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
                 this->appsettings.centralPswd, this->appsettings.device, err);

@@ -36,7 +36,7 @@ static void verifyPathsPage(Doclientier &clientier, const string &entityName, ve
         pathpool.insert(pth);
     }
 
-    DocsResp rep = clientier.synQueryPathsPage(pths, Port::docstier);
+    DocsResp rep = clientier.synQueryPathsPage(pths);
 
     PathsPage pthpage = rep.syncingPage;
 
@@ -57,7 +57,7 @@ void DocsReq::format(const IFileDescriptor &, const string) {}
 /** See synode-7.10-template-instance.json for configuration */
 string setting_json = "settings/synode-7.10-reddish-instance.json";
 
-TEST(Syncpage, Query) {
+TEST(T02_Syncpage, Query) {
     aninfo(R"([Note 13 June 2026]
     To run this test,
     start synode at port 8957,
@@ -65,8 +65,8 @@ TEST(Syncpage, Query) {
 
     AstMap asts;
     JsonOpt opts{&asts};
-    register_jserv(asts, opts);
-    register_semantier(asts, "ast/");
+    register_jserv(&opts);
+    register_semantier(&opts, "ast/");
 
     filesystem::path folder_path{"ast/"};
     aninfo((folder_path/"docsreq.ast.json").string());
@@ -74,11 +74,11 @@ TEST(Syncpage, Query) {
     ASSERT_EQ(".json", docreq_ast.extension());
     ASSERT_TRUE(filesystem::exists(docreq_ast));
 
-    register_doctier(asts, "ast/");
-    register_anclientsettingsAst(asts);
+    register_doctier(&opts, "ast/");
+    register_anclientsettingsAst(&opts);
 
     AnclientSettings settings;
-    bool result = Anson::from_file(setting_json, settings);
+    bool result = Anson::from_file(setting_json, settings, &opts);
     ASSERT_TRUE(result);
     aninfo(std::format("synode {} : {} : {}", settings.jserv, settings.admin, settings.domain_token));
 
@@ -87,13 +87,13 @@ TEST(Syncpage, Query) {
     // jprotocol.setup(settings.jprotocolpath, Port::docstier);
     JServUrl jserv{settings.jserv, jprotocol};
 
-    OnError onErr = [](MsgCode c, const string &e, const vector<string> &a) {
-        anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    OnError onErr = [&opts](MsgCode c, const string &e, const vector<string> &a) {
+        anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(&opts, c), e));
     };
 
     OnLink onlink = [](const connect_state& newstate) {};
-    Doclientier doclient{phm.tbl, "/sys", "/syn", onlink, onErr};
-    doclient.loginWithUri(jserv, settings.admin, settings.domain_token, "cpp-test", onErr);
+    Doclientier doclient{phm.tbl, "/sys", "/syn", jserv, onlink, onErr};
+    doclient.loginWithUri(settings.admin, settings.domain_token, "cpp-test", onErr);
 
     SessionInf ssinf = doclient.client.ssInf;
     ASSERT_EQ(settings.admin, ssinf.uid);

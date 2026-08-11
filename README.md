@@ -22,3 +22,13 @@ Install latest semantier_generator from PYPI.
 1. synode infor-17.1 port 8957
 
 1. jserv-sample JsampleApp, port 8080
+
+1. Notes
+
+   - To update build/anson.cmake-src only,
+
+     ```
+         rm -rf build/Debug/_deps/anson.cmake-src build/Debug/_deps/anson.cmake-build build/Debug/_deps/anson.cmake-subbuild
+     ```
+
+     and run cmake.

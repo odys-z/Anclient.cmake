@@ -33,20 +33,18 @@ std::string operator""_ans_(const char* str, std::size_t len) {
 
 
 TEST(Translate, Deprecated_by_LangString) {
-    IJsonable::contxt_ptr = &contxt;
-
     register_asts(asts);
-    register_stringvaluesAst(asts);
+    register_stringvaluesAst(&contxt);
 
     // StringValues langs;
-    Anson::from_file("settings/strings.json", my_langs);
+    Anson::from_file("settings/strings.json", my_langs, &contxt);
     ASSERT_EQ("English", my_langs.en["eng"]);
     ASSERT_EQ("English", "eng"_ans_);
     ASSERT_EQ("Chinese", my_langs.en["chn"]);
     ASSERT_EQ("Chinese", "chn"_ans_);
     ASSERT_EQ("jp", "jp"_ans_);
 
-    Anson::from_file("settings/strings-zh.json", my_langs);
+    Anson::from_file("settings/strings-zh.json", my_langs, &contxt);
     ASSERT_EQ("English", my_langs.en["eng"]);
     ASSERT_EQ("英语", my_langs.local["eng"]);
     ASSERT_EQ("英语", "eng"_ans_);

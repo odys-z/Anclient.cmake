@@ -33,12 +33,12 @@ TEST(ANCLIENT, PING) {
 
     AstMap enums;
     JsonOpt opts{&enums};
-    register_jserv(enums, opts);
-    load_echoAst_ext(enums);
-    register_semantier(enums, "ast/");
+    register_jserv(&opts);
+    load_echoAst_ext(&opts);
+    register_semantier(&opts, "ast/");
 
-    OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
-        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    OnError errctx = [&opts](MsgCode c, const string& e, const vector<string>& a) {
+        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(&opts, c), e));
     };
 
     JServUrl jserv{"http://127.0.0.1:8080/jserv-sample", &opts};
@@ -56,12 +56,12 @@ TEST(ANCLIENT, PING) {
 TEST(ANCLIENT, AnSESSION) {
     AstMap enums;
     JsonOpt opts{&enums};
-    register_jserv(enums, opts);
-    load_echoAst_ext(enums);
-    register_semantier(enums, "ast/");
+    register_jserv(&opts);
+    load_echoAst_ext(&opts);
+    register_semantier(&opts, "ast/");
 
-    OnError errctx = [](MsgCode c, const string& e, const vector<string> &a) {
-        anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    OnError errctx = [&opts](MsgCode c, const string& e, const vector<string> &a) {
+        anerror(std::format("[ERROR code {}], error: {}", AnsonJavaEnumAst::name<MsgCode>(&opts, c), e));
     };
 
     OnLink onlink = [](const connect_state& newstate) {};
@@ -71,9 +71,9 @@ TEST(ANCLIENT, AnSESSION) {
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
     string plainkey = "123456";
-    Doclientier doclient{"h_photos", "sys", "syn", onlink, errctx};
+    Doclientier doclient{"h_photos", "sys", "syn", jserv, onlink, errctx};
     anlog("1 ==================================================");
-    doclient.loginWithUri(jserv, "ody", plainkey, "test.device", errctx);
+    doclient.loginWithUri("ody", plainkey, "test.device", errctx);
 
     SessionClient c = doclient.client;
     ASSERT_EQ("ody", c.ssInf.uid);

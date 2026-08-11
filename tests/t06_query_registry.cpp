@@ -37,13 +37,13 @@ TEST(REGSTRY, Query) {
 
     AstMap reg_asts;
     JsonOpt reg_opts{&reg_asts};
-    register_jserv(reg_asts, reg_opts);
-    register_anclient_cmake(reg_asts, "ast/");
-    register_semantier(reg_asts, "ast");
-    register_centralclientier(reg_asts, "ast/");
+    register_jserv(&reg_opts);
+    register_anclient_cmake(&reg_opts, "ast/");
+    register_semantier(&reg_opts, "ast");
+    register_centralclientier(&reg_opts, "ast/");
 
-    OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
-        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    OnError errctx = [&reg_opts](MsgCode c, const string& e, const vector<string>& a) {
+        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(&reg_opts, c), e));
     };
 
     OnLink onbeat = [](connect_state conn) {
@@ -51,7 +51,7 @@ TEST(REGSTRY, Query) {
     };
 
     AnclientSettings settings;
-    Anson::from_file(setting_json, settings);
+    Anson::from_file(setting_json, settings, &reg_opts);
 
     SynodeConfig node_cfg {"test-id", "device"};
 
@@ -61,7 +61,7 @@ TEST(REGSTRY, Query) {
     Clients::if_verbose = true;
     AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx);
 
-    RegistryClient client{settings, jserv, node_cfg, onbeat, errctx};
+    RegistryClient client{settings, jserv, onbeat, errctx};
 
     /*
      * Semantic-Network\registration\jserv\src\main\webapp\regist-vol\system.sqlite

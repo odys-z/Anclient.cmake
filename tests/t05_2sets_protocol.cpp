@@ -33,22 +33,22 @@ TEST(PROTOCOL_SETS, Double_PING) {
 
     AstMap local_asts;
     JsonOpt local_opts{&local_asts};
-    register_jserv(local_asts, local_opts);
-    register_anclient_cmake(local_asts, "ast/");
-    register_semantier(local_asts, "ast/");
+    register_jserv(&local_opts);
+    register_anclient_cmake(&local_opts, "ast/");
+    register_semantier(&local_opts, "ast/");
 
     AstMap centr_asts;
     JsonOpt centr_opts{&centr_asts};
-    register_jserv(centr_asts, centr_opts);
-    register_anclient_cmake(centr_asts, "ast/");
-    register_centralclientier(centr_asts, "ast/");
+    register_jserv(&centr_opts);
+    register_anclient_cmake(&centr_opts, "ast/");
+    register_centralclientier(&centr_opts, "ast/");
 
-    OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
-        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    OnError errctx = [&local_opts](MsgCode c, const string& e, const vector<string>& a) {
+        anerror(std::format("Error code {}, error: {}", MsgCode::to_string(c.valeur), e));
     };
 
     AnclientSettings settings;
-    Anson::from_file(sets_local, settings);
+    Anson::from_file(sets_local, settings, &local_opts);
 
     JServUrl local_jserv{settings.regiserv, &local_opts};
     ASSERT_EQ("regist-central", local_jserv.jprotocol.protocolpath);

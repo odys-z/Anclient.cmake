@@ -32,11 +32,11 @@ public:
      * the onlink call back can be a dangling prointer. So force the constructor requiring it for safety.
      * @param onerr
      */
-    Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const OnLink& onheartlink, const OnError& onerr)
-        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(JServUrl{"", {}}, onheartlink, onerr) {
+    Doclientier(const string &doctbl, const string &sysuri, const string &synuri, const JServUrl &jserv, const OnLink& onheartlink, const OnError& onerr)
+        : doctbl(doctbl), sysuri(sysuri), synuri(synuri), err(onerr), client(jserv, onheartlink, onerr) {
     }
 
-    DocsResp synQueryPathsPage(const PathsPage &page, Port port) {
+    DocsResp synQueryPathsPage(const PathsPage &page) {
         AnsonHeader header = client.Header();
         header.Act("synclient.cpp", "query", "r/states", "query sync");
 
@@ -47,7 +47,7 @@ public:
         req.device = Device{page.device, "synode anclient.cmake test", "Ody@test"};
         req.a = DocsReq::A::selectSyncs;
 
-        AnsonMsg<DocsReq> q{Port{Port::docstier}};
+        AnsonMsg<DocsReq> q{Port{client.jserv.jprotocol.ctx, Port::docstier}};
         q.Body(req);
         q.Header(header);
 
@@ -58,9 +58,8 @@ public:
         return resp;
     }
 
-    inline Doclientier* loginWithUri(const JServUrl &jserv,
-           const string& uid, const string& pswd, const string& device, const OnError& err) {
-        this->client.jserv = jserv;
+    inline Doclientier* loginWithUri(const string& uid, const string& pswd, const string& device, const OnError& err) {
+        // this->client.jserv = jserv;
         this->client.loginWithUri(sysuri, uid, pswd, device, err);
         return this;
     }
@@ -81,8 +80,8 @@ public:
     OnError onErr;
 
     /** A::queryDomConfig */
-    void asyquery_orgdoms(const string & org, const OnOk& ok, const OnError& err) {
-      std::thread query_thread([this, &org, &ok, &err]() {
+    void asyquery_orgdoms(const string& org, const OnOk& ok, const OnError& err) {
+      std::thread query_thread([this, org, ok, err]() {
         try {
             anlog(ssInf.toBlock(*jserv.jprotocol.ctx));
             anlog(jserv.jserv());
@@ -111,12 +110,9 @@ public:
             req.market = market;
             req.diction = dict;
 
-            anlog("=========================\n"s + ssInf.toBlock());
-            AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{Centralport::regist}, req)
+            anlog("=========================\n"s + ssInf.toBlock(*jserv.jprotocol.ctx));
+            AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{jserv.jprotocol.ctx, Centralport::regist}, req)
                     .Header(ssInf);
-            anlog("=========================\n"s + q.toBlock());
-
-            anlog(q.toBlock(*jserv.jprotocol.ctx));
             RegistResp resp = commit<RegistResp>(q, err);
             ok(resp);
         }
@@ -136,8 +132,8 @@ public:
       query_thread.detach();
     }
 
-    void asyquery_domconfig(const string & org, const string& domid, const OnOk& ok, const OnError& err) {
-        std::thread query_thread([this, &org, &ok, &err, &domid]() {
+    void asyquery_domconfig(const string& org, const string& domid, const OnOk& ok, const OnError& err) {
+        std::thread query_thread([this, org, ok, err, domid]() {
             if (LangExt::isblank(ssInf.ssid)) {
                 loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
                              this->appsettings.centralPswd, this->appsettings.device, err);
@@ -164,14 +160,15 @@ public:
             req.market = market;
             req.diction = dict;
 
-            anlog("=========================\n"s + ssInf.toBlock());
-            AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{Centralport::regist}, req)
+            anlog("=========================\n"s + ssInf.toBlock(*jserv.jprotocol.ctx));
+            AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{jserv.jprotocol.ctx, Centralport::regist}, req)
                                         .Header(ssInf);
-            anlog("=========================\n"s + q.toBlock());
+            anlog("=========================\n"s + q.toBlock(*jserv.jprotocol.ctx));
 
             try {
                 anlog(q.toBlock(*jserv.jprotocol.ctx));
                 RegistResp resp = commit<RegistResp>(q, err);
+                andebug("asyquery_domconfig() ok: "s + resp.toBlock(*jserv.jprotocol.ctx));
                 ok(resp);
             }
             catch (const SemanticException& e) {

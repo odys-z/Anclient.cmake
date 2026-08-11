@@ -9,5 +9,6 @@
 
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/json.h>
+#include <io/odysz/reflect.h>
 
 int main() { return 0; }

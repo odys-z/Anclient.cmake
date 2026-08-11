@@ -34,16 +34,16 @@ TEST(Registry, PING_Local) {
 
     AstMap asts;
     JsonOpt opts{&asts};
-    register_jserv(asts, opts);
-    register_anclient_cmake(asts, "ast/");
-    register_centralclientier(asts, "ast/");
+    register_jserv(&opts);
+    register_anclient_cmake(&opts, "ast/");
+    register_centralclientier(&opts, "ast/");
 
     OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
-        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+        anerror(std::format("Error code {}, error: {}", MsgCode::to_string(c.valeur), e));
     };
 
     AnclientSettings settings;
-    Anson::from_file(setting_json, settings);
+    Anson::from_file(setting_json, settings, &opts);
 
     JServUrl jserv{settings.regiserv, &opts};
     ASSERT_EQ("regist-central", jserv.jprotocol.protocolpath);
@@ -60,16 +60,16 @@ TEST(Registry, PING_Central) {
 
     AstMap asts;
     JsonOpt opts{&asts};
-    register_jserv(asts, opts);
-    register_anclient_cmake(asts, "ast/");
-    register_centralclientier(asts, "ast/");
+    register_jserv(&opts);
+    register_anclient_cmake(&opts, "ast/");
+    register_centralclientier(&opts, "ast/");
 
-    OnError errctx = [](MsgCode c, const string& e, const vector<string>& a) {
-        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(c), e));
+    OnError errctx = [&opts](MsgCode c, const string& e, const vector<string>& a) {
+        anerror(std::format("Error code {}, error: {}", AnsonJavaEnumAst::name<MsgCode>(&opts, c), e));
     };
 
     AnclientSettings settings;
-    Anson::from_file(setting_json, settings);
+    Anson::from_file(setting_json, settings, &opts);
 
     JServUrl jserv{settings.regiserv, &opts};
     ASSERT_EQ("regist-alpha", jserv.jprotocol.protocolpath);

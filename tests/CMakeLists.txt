@@ -45,7 +45,7 @@ target_link_libraries(anclient_tests
         gtest_main
 )
 
-add_compile_definitions(ANSON_VERBOSE=4)
+add_compile_definitions(ANSON_VERBOSE=5)
 
 # target_compile_options(anclient_tests PRIVATE /showIncludes)
 # if(MSVC)

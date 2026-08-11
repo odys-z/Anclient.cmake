@@ -39,7 +39,7 @@ class SessionClient {
 
 	bool stoplink;
 	string syncFlag;
-	AnsonMsg<HeartBeat> beatReq;
+    // AnsonMsg<HeartBeat> beatReq;
 	int msInterval;
 
     const OnLink synlink_flipped;
@@ -74,7 +74,7 @@ public:
     }
 
     template<typename Rp, typename R>
-    static Rp& commit(const JsonOpt* ctx_ptr, const JServUrl &jserv, AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
+    static Rp& commit(const JsonOpt* ctx_ptr, const JServUrl &jserv, const AnsonMsg<R> &req, const OnError &err, bool verbose = false) {
 
         std::stringstream ss;
         req.toBlock(ss, *ctx_ptr); // FIXME performance problem
@@ -95,7 +95,7 @@ public:
                 {"User-Agent", "Mozilla/5.0 (Anclient.cmake)"}}
         );
 
-        AnsonMsg<Rp> *resp = new AnsonMsg<Rp>{};
+        AnsonMsg<Rp> *resp = new AnsonMsg<Rp>{ctx_ptr};
 
         if (r.status_code == 201 || r.status_code == 200) { // 201 is 'Created'
             std::cout << "commit(): Success!" << std::endl;
@@ -135,7 +135,7 @@ public:
     }
 
     template<typename Rp, typename R>
-    Rp& commit(AnsonMsg<R> &req, const OnError &err, bool if_verbose = false) {
+    Rp& commit(const AnsonMsg<R> &req, const OnError &err, bool if_verbose = false) {
         return SessionClient::commit<Rp, R>(jserv.jprotocol.ctx, jserv, req, err, if_verbose);
     }
 
@@ -172,12 +172,12 @@ public:
 		stoplink = false;
 
         HeartBeat beat{clientUri, ssInf.ssid, ssInf.uid};
-        beatReq = AnsonMsg<HeartBeat>{Port{Port::heartbeat}};
+        AnsonMsg<HeartBeat> beatReq = AnsonMsg<HeartBeat>{Port{jserv.jprotocol.ctx, Port::heartbeat}};
         beatReq .Header(ssInf)
 				.Body(beat);
 		
 		// msInterval = msInterv == null || msInterv.length < 1 ? 60000 : msInterv[0];
-        std::thread beat_thread([this, msInterv]() {
+        std::thread beat_thread([this, beatReq, msInterv]() {
 			int failed = 0;
             while (!stoplink) {
                 try {
@@ -222,7 +222,7 @@ public:
     inline static bool if_verbose;
 
     inline static OnError err = [] (MsgCode c, const string& m, const vector<string>& args) {
-        anerror(format("code: {}, msg:\n{}", AnsonJavaEnumAst::name<MsgCode>(c), m));
+        anerror(format("code: {}, msg:\n{}", MsgCode::to_string(c.valeur), m));
         anerror(args);
     };
 
@@ -240,11 +240,10 @@ public:
 
         EchoReq req;
         req.echo = msg;
-        // req.a = EchoReq::A::inet;
-        req.a = a; // EchoReq::A::inet;
+        req.a = a;
         anlog("[Clinet.pingLess.body] "s + req.toBlock(*jserv.jprotocol.ctx));
 
-        AnsonMsg<EchoReq> anmsg(Port(Port::echo), req);
+        AnsonMsg<EchoReq> anmsg(Port(jserv.jprotocol.ctx, Port::echo), req);
 
         anlog(std::format("[Clinet.pingLess Msg] port {} [{}]", anmsg.port.valof(), anmsg.port.url()));
 
@@ -261,10 +260,9 @@ inline void SessionClient::loginWithUri(const string uri, const string uid,
 
     format_sessionReq(req, uid, pswd, device);
 
-    AnsonMsg<AnSessionReq> msg{Port{Port::session}};
+    AnsonMsg<AnSessionReq> msg{Port{jserv.jprotocol.ctx, Port::session}};
     msg.Body(req);
 
-    // AnSessionResp &rply = SessionClient::commit<AnSessionResp>(client.jserv, msg, err);
     AnSessionResp &rply = commit<AnSessionResp>(msg, err);
 
     this->ssInf = rply.ssInf;

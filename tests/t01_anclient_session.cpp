@@ -82,7 +82,9 @@ TEST(ANCLIENT, AnSESSION) {
 
     vector<string_view> ss = LangExt::split(c.ssInf.ssToken, ':');
     string knowledge = AESHelper2::decrypt(string{ss[0]}, plainkey, AESHelper2::decode64(string{ss[1]}));
-    knowledge = LangExt::split(knowledge, ':')[1]; // Not correct comments? What we got here is not the response of server, it's repacked token. So need decape the prefix
+    knowledge = LangExt::split(knowledge, ':')[1];
+    // Not correct comments?
+    // What we got here is not the response of server, it's repacked token. So need decape the prefix
     ASSERT_TRUE(AESHelper2::verifyToken(c.ssInf.ssToken, knowledge, "ody", plainkey));
 
     // Verify header token handling

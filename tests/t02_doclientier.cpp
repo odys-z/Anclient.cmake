@@ -92,7 +92,7 @@ TEST(T02_Syncpage, Query) {
     };
 
     OnLink onlink = [](const connect_state& newstate) {};
-    Doclientier doclient{phm.tbl, "/sys", "/syn", jserv, onlink, onErr};
+    Doclientier doclient{phm.tbl, settings, jserv, onlink, onErr};
     doclient.loginWithUri(settings.admin, settings.domain_token, "cpp-test", onErr);
 
     SessionInf ssinf = doclient.client.ssInf;

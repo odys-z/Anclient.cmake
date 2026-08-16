@@ -1,0 +1,13 @@
+{ "type": "io.odysz.jclient.AnclientSettings",
+  "sysuri": "/sys",
+  "synuri": "/syn",
+  "jserv" : "http://localhost:8964/album-jserv",
+  "org"   : "",
+  "domain": "test.dom",
+  "device": "test",
+  "admin" : "ody",
+  "domain_token" : "****",
+  "regiserv"     : "",
+  "centralPswd"  : "",
+  "temp_dir"     : "temp" 
+}

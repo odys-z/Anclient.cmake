@@ -7,8 +7,6 @@
 
 #include <io/odysz/gen/registry.hpp>
 
-#include <gen/app_settings.hpp>
-
 namespace anson {
 
 class Semantier {
@@ -18,9 +16,7 @@ public:
 
 class Doclientier : public Semantier {
 public:
-    // string sysuri;
-    // const string synuri;
-    const DesktopSettings& appsettings;
+    const AnclientSettings& appsettings;
     const string doctbl;
     const OnError & err;
 
@@ -35,7 +31,7 @@ public:
      * the onlink call back can be a dangling prointer. So force the constructor requiring it for safety.
      * @param onerr
      */
-    Doclientier(const string &doctbl, const DesktopSettings& settings, const JServUrl &jserv, const OnLink& onheartlink, const OnError& onerr)
+    Doclientier(const string &doctbl, const AnclientSettings& settings, const JServUrl &jserv, const OnLink& onheartlink, const OnError& onerr)
         : doctbl(doctbl), appsettings(settings), err(onerr), client(jserv, onheartlink, onerr) {
     }
 

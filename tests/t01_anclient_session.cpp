@@ -10,6 +10,7 @@
 
 #include <io/odysz/jprotocol.h>
 #include <io/odysz/entt_jserv.h>
+#include <io/odysz/anson.h>
 #include <io/odysz/gen/doctier.hpp>
 
 #include "io/odysz/gen/semantier.hpp"
@@ -57,6 +58,7 @@ TEST(ANCLIENT, AnSESSION) {
     AstMap enums;
     JsonOpt opts{&enums};
     register_jserv(&opts);
+    register_anclientsettingsAst(&opts);
     load_echoAst_ext(&opts);
     register_semantier(&opts, "ast/");
 
@@ -70,8 +72,10 @@ TEST(ANCLIENT, AnSESSION) {
     JProtocol j{"jserv-sample", &opts};
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
+    AnclientSettings settings;
+    Anson::from_file("settings/test-settings.json", settings, &opts);
     string plainkey = "123456";
-    Doclientier doclient{"h_photos", "sys", "syn", jserv, onlink, errctx};
+    Doclientier doclient{"h_photos", settings, jserv, onlink, errctx};
     anlog("1 ==================================================");
     doclient.loginWithUri("ody", plainkey, "test.device", errctx);
 

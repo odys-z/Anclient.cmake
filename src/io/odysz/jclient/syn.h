@@ -1,5 +1,7 @@
 #pragma once
 
+#include <io/odysz/common.h>
+
 #include "../clients.h"
 #include "io/odysz/gen/anclient_settings.hpp"
 #include "io/odysz/gen/doctier.hpp"
@@ -82,6 +84,8 @@ public:
     void asyquery_orgdoms(const string& org, const OnOk& ok, const OnError& err) {
       std::thread query_thread([this, org, ok, err]() {
         try {
+            LangExt::mustnonull(market);
+            LangExt::mustnonull(orgid);
             anlog(ssInf.toBlock(*jserv.jprotocol.ctx));
             anlog(jserv.jserv());
             if (LangExt::isblank(ssInf.ssid)) {

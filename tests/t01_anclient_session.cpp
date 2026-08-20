@@ -73,7 +73,7 @@ TEST(ANCLIENT, AnSESSION) {
     JServUrl jserv{"http://127.0.0.1:8080", j};
 
     AnclientSettings settings;
-    Anson::from_file("settings/test-settings.json", settings, &opts);
+    Anson::from_file("settings/test-client-settings.json", settings, &opts);
     string plainkey = "123456";
     Doclientier doclient{"h_photos", settings, jserv, onlink, errctx};
     anlog("1 ==================================================");
@@ -92,7 +92,7 @@ TEST(ANCLIENT, AnSESSION) {
     ASSERT_TRUE(AESHelper2::verifyToken(c.ssInf.ssToken, knowledge, "ody", plainkey));
 
     // Verify header token handling
-    anlog("2 ==================================================");
+    anlog("2 start beating ... ... ... ... ... ... ... ... ... ... ... ... ...");
     ASSERT_FALSE(c.heartbeating);
     /// c.openLink(myuri, [](const connect_state& newstate) {}, errctx, 2001);
     c.openLink(myuri, 2001);

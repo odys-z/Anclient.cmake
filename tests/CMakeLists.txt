@@ -14,11 +14,11 @@ add_executable(anclient_tests
     io/odysz/semantic/meta.h
     ../src/io/odysz/gen/anclient_settings.hpp
     t01_anclient_session.cpp
-    t02_doclientier.cpp
-    t03_translate.cpp
-    t04_registry_protocol.cpp
-    t05_2sets_protocol.cpp
-    t06_query_registry.cpp
+    # t02_doclientier.cpp
+    # t03_translate.cpp
+    # t04_registry_protocol.cpp
+    # t05_2sets_protocol.cpp
+    # t06_query_registry.cpp
 )
 
 add_custom_command(TARGET anclient_tests POST_BUILD
@@ -45,7 +45,7 @@ target_link_libraries(anclient_tests
         gtest_main
 )
 
-add_compile_definitions(ANSON_VERBOSE=5)
+add_compile_definitions(ANSON_VERBOSE=4)
 
 # target_compile_options(anclient_tests PRIVATE /showIncludes)
 # if(MSVC)

@@ -181,7 +181,8 @@ public:
 			int failed = 0;
             while (!stoplink) {
                 try {
-                    commit<AnsonResp>(beatReq, beat_err);
+                    AnsonResp resp = commit<AnsonResp>(beatReq, beat_err);
+                    anlog(resp.m);
                     if (!heartbeating) {
                         anlog("====================================================== link to synode: turn-on");
                         heartbeating = true;

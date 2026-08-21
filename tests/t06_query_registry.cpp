@@ -30,7 +30,7 @@ using namespace entt::literals;
  *
  * Start up regist-jserv at port 1900, see synode-7.10-...-instance.json/regiserv
  */
-TEST(REGSTRY, Query) {
+TEST(T06_REGSTRY, Query) {
     // See synode-7.10-template-instance.json for configuration
     string setting_json = "settings/synode-7.10-localhost-instance.json";
     // string setting_json = "settings/synode-7.10-reddish-instance.json";
@@ -65,10 +65,13 @@ TEST(REGSTRY, Query) {
 
     /*
      * Semantic-Network\registration\jserv\src\main\webapp\regist-vol\system.sqlite
-     * c_syndomx
-        market|orgid |domid|domname |stat|nonsql|optime|oper|
-        ------+------+-----+--------+----+------+------+----+
-        my    |org.my|edu-x|my edu-x|    |      |      |    |
+     *  c_syndomx
+        market|orgid |domid    |domname        |stat|nonsql|optime|oper|
+        ------+------+---------+---------------+----+------+------+----+
+        alpha |org.my|edu-x    |my edu-x       |    |      |      |    |
+        alpha |qqhome|reddish-2|alpha reddish-2|    |      |      |    |
+        alpha |pmking|pm-1     |alpha pm-1     |    |      |      |    |
+        alpha |pmking|pm-2     |alpha pm-2     |    |      |      |    |
 
      * c_synodes
         market|orgid |domx |sid      |mode|stat|jserv                                |ip       |port|nonsql|optime             |oper     |
@@ -78,7 +81,7 @@ TEST(REGSTRY, Query) {
         my    |org.my|edu-x|edu-x-2  |    |p   |http://192.168.0.201:---2/jserv-album|127.0.0.1|   0|      |2025-10-25 09:40:55|edu-x-2  |
      *
      */
-    client.market = "my";
+    client.market = "alpha";
     client.orgid  = "org.my";
     client.orgname  = "my edu-x";
 

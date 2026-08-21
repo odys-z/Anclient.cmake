@@ -167,6 +167,11 @@ public:
     void stopbeat() { stoplink = true; }
 
     SessionClient* openLink(const string& clientUri, int msInterv = 60000) noexcept {
+        if (!this->jserv.jprotocol.ctx) {
+            anerror("*** ERROR *** Cannot open heart link. jserv.jprotocol.ctx is null.");
+            return this;
+        }
+
 		// link
 		syncFlag = "link";
 		stoplink = false;

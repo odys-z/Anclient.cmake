@@ -28,7 +28,7 @@ using namespace entt::literals;
 /**
  * @brief Requires starting jserv-sample at localhost:8080 before running the test.
  */
-TEST(Registry, PING_Local) {
+TEST(T04_Registry, PING_Local) {
     // See synode-7.10-template-instance.json for configuration
     string setting_json = "settings/synode-7.10-localhost-instance.json";
 
@@ -54,9 +54,9 @@ TEST(Registry, PING_Local) {
     ASSERT_EQ("TEST Echo...", resp.m);
 }
 
-TEST(Registry, PING_Central) {
+TEST(T04_Registry, PING_Central) {
     // See synode-7.10-template-instance.json for configuration
-    string setting_json = "settings/synode-7.10-reddish-instance.json";
+    string setting_json = "settings/synode-7.10-localhost-instance.json";
 
     AstMap asts;
     JsonOpt opts{&asts};
@@ -72,10 +72,12 @@ TEST(Registry, PING_Central) {
     Anson::from_file(setting_json, settings, &opts);
 
     JServUrl jserv{settings.regiserv, &opts};
-    ASSERT_EQ("regist-alpha", jserv.jprotocol.protocolpath);
+    ASSERT_EQ("regist-central", jserv.jprotocol.protocolpath);
 
     Clients::if_verbose = true;
-    AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx, EchoReq::A::echo);
+    AnsonResp resp = Clients::pingLess(jserv, "Anson.cmake/test", "TEST Echo...", errctx,
+                                       // A::inet from remote is not allowed
+                                       EchoReq::A::echo);
 
-    ASSERT_EQ("echo", resp.m);
+    ASSERT_EQ(("Echo with unhandled act: "s + EchoReq::A::echo), resp.m);
 }

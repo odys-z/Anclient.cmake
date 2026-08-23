@@ -15,6 +15,8 @@ namespace anson {
 class AnclientSettings : public anson::Anson {
 public:
     inline static const std::string _type_ = "io.odysz.jclient.AnclientSettings";
+    string market_id;
+    string market_name;
     string sysuri;
     string synuri;
     string jserv;
@@ -36,6 +38,8 @@ inline static void register_anclientsettingsAst(JsonOpt* ctx) {
 
     AnsonAst * ast = createAST <AnclientSettings, AnsonAst> (
         *ctx->asts, Anson::_type_, map <string, AnsonField> {
+        {"market_id", {.dataAnclass="string"} },
+        {"market_name", {.dataAnclass="string"} },
         {"sysuri", {.dataAnclass="string"} },
         {"synuri", {.dataAnclass="string"} },
         {"jserv", {.dataAnclass="string"} },
@@ -54,6 +58,8 @@ inline static void register_anclientsettingsAst(JsonOpt* ctx) {
         .base<Anson>()
         .ctor<>()
 
+        .data<&anson::AnclientSettings::market_id>("market_id")
+        .data<&anson::AnclientSettings::market_name>("market_name")
         .data<&anson::AnclientSettings::sysuri>("sysuri")
         .data<&anson::AnclientSettings::synuri>("synuri")
         .data<&anson::AnclientSettings::jserv>("jserv")
@@ -71,6 +77,10 @@ inline static void register_anclientsettingsAst(JsonOpt* ctx) {
         ast->get_field_instance = [ast, ctx](const IJsonable& ans, const string& fieldname) -> meta_any {
             if (ast->fields.contains(fieldname)) {
                 auto& concrete = static_cast<const AnclientSettings&>(ans);
+                if ("market_id" == fieldname)
+                    return entt::forward_as_meta(concrete.market_id);
+                if ("market_name" == fieldname)
+                    return entt::forward_as_meta(concrete.market_name);
                 if ("sysuri" == fieldname)
                     return entt::forward_as_meta(concrete.sysuri);
                 if ("synuri" == fieldname)

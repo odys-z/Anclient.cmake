@@ -2,6 +2,8 @@
   "dataAnclass": "io.odysz.jclient.AnclientSettings",
   "baseAnclass": "io.odysz.anson.Anson",
   "fields" : {
+    "market_id"  : {"dataAnclass": "string"},
+    "market_name": {"dataAnclass": "string"},
     "sysuri": {"dataAnclass": "string"},
     "synuri": {"dataAnclass": "string"},
     "jserv" : {"dataAnclass": "string"},

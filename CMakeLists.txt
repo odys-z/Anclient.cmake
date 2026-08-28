@@ -1,20 +1,31 @@
 cmake_minimum_required(VERSION 3.30)
 
-# meson will compile libpsl with msvc.
-# set(ENV{PATH} ".../mingw64-gcc16.1.0/bin;$ENV{PATH}")
+# Forces gcc/g++ for sub-builds (works around meson picking up MSVC for libpsl
+# on Windows). Harmless on Linux/macOS where these are already the default.
 set(ENV{CC} "gcc")
 set(ENV{CXX} "g++")
-# list(APPEND MESON_ARGS "--native-file" ".../mingw64-gcc16.1.0/bin/gcc.exe")
 set(CPR_CURL_USE_LIBPSL OFF CACHE BOOL "" FORCE)
 
-
-# in my/github/vcpkg install ...
-# See README
+# vcpkg must be checked out as a sibling directory: ../vcpkg. See README.
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 set(VCPKG_INSTALLED_DIR "${CMAKE_SOURCE_DIR}/../vcpkg/installed" CACHE PATH "vcpkg install dir")
 
-set(VCPKG_TARGET_TRIPLET "x64-mingw-dynamic" CACHE STRING "")
-set(VCPKG_HOST_TRIPLET "x64-mingw-dynamic" CACHE STRING "")
+# Pick a sane default triplet per-platform. Override on the command line with
+# -DVCPKG_TARGET_TRIPLET=... / -DVCPKG_HOST_TRIPLET=... if you need something else
+# (e.g. cross-compiling Windows binaries from Linux via MinGW).
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+    if(WIN32)
+        set(VCPKG_TARGET_TRIPLET "x64-mingw-dynamic" CACHE STRING "")
+    elseif(APPLE)
+        set(VCPKG_TARGET_TRIPLET "x64-osx" CACHE STRING "")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "")
+    endif()
+endif()
+
+if(NOT DEFINED VCPKG_HOST_TRIPLET)
+    set(VCPKG_HOST_TRIPLET "${VCPKG_TARGET_TRIPLET}" CACHE STRING "")
+endif()
 
 project(anclient.cmake
     VERSION 0.1.0
@@ -27,26 +38,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 # Generate compile_commands.json for clangd/IDE integration
-# we have network problem
-# This will save time for each clean build.
-# [try] Uncomment this for the first time as the network condition is complicate in China, by the GFW.
-# qt creator -DQT_CREATOR_SKIP_VCPKG_SETUP:BOOL=ON
-
-# see ping.cpp
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-message(STATUS "=========================================== CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
-message(STATUS "=========================================== CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-
-# vcpkg install openssl:x64-mingw-dynamic
+# vcpkg install openssl
 find_package(OpenSSL REQUIRED)
 
 # vcpkg install boost-url
-# find_package(Boost CONFIG REQUIRED COMPONENTS url)
 find_package(boost_url CONFIG REQUIRED)
 
-# ./vcpkg install entt:x64-windows --x-install-root="../Anclient.cmake/vcpkg_packages"
+# vcpkg install entt
 find_package(EnTT CONFIG REQUIRED)
+
+# vcpkg install nlohmann-json
 find_package(nlohmann_json CONFIG REQUIRED)
 
 include(FetchContent)
@@ -54,22 +57,20 @@ include(FetchContent)
 FetchContent_Declare(
   anson.cmake
   GIT_REPOSITORY https://github.com/odys-z/anson.cmake.git
-  # SOURCE_SUBDIR  antson.cmake
   GIT_TAG        main
 )
 
 set(ANSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(anson.cmake)
 
-# pip install meson ninja
+# Requires: pip install meson (cpr builds libcurl via meson)
 FetchContent_Declare(
   cpr
   GIT_REPOSITORY https://github.com/libcpr/cpr.git
-  GIT_TAG f091b2c061b307ee89b164c39976fc9202a1c79d) # 1.14.2 @ https://github.com/libcpr/cpr/releases
+  GIT_TAG f091b2c061b307ee89b164c39976fc9202a1c79d) # 1.14.2
 
 FetchContent_MakeAvailable(cpr)
 
-# add_compile_options(/utf-8)
 if(WIN32)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         add_compile_options(-Wa,-mbig-obj)
@@ -78,11 +79,9 @@ if(WIN32)
     endif()
 endif()
 
-# before src
 option(ANCLIENT_BUILD_TESTS "Build tests for Anclient.cmake" ON)
 add_subdirectory(src)
 
-# 3. Add tests (only if this is the main project)
 if (ANCLIENT_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)

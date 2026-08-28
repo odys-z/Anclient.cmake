@@ -45,3 +45,45 @@ Install latest semantier_generator from PYPI.
      ```
 
      and run cmake.
+
+# Compile on Ubuntu
+
+## Prerequisites
+
+Install build tooling:
+
+```
+    sudo apt update
+    sudo apt install -y build-essential ninja-build git curl zip unzip tar \
+        pkg-config autoconf automake libtool python3
+    pip install --user meson
+```
+
+`meson` is required because `cpr` (fetched automatically via `FetchContent`) builds
+`libcurl` and some of its dependencies with Meson.
+
+CMake v4.4.2 or newer, and `g++-16`.
+
+## vcpkg
+
+```
+    cd ..
+    git clone https://github.com/microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh
+```
+
+Install the dependencies for the Linux triplet:
+
+```
+    ./vcpkg install openssl:x64-linux boost-url:x64-linux \
+        entt:x64-linux nlohmann-json:x64-linux
+```
+
+`CMakeLists.txt` auto-selects the `x64-linux` triplet on Linux, so no extra
+`-DVCPKG_TARGET_TRIPLET` flag is needed for a native build. Pass one explicitly
+only if you want to cross-compile (e.g. Windows binaries via MinGW).
+
+## Build
+
+Should be built as Qt Project.

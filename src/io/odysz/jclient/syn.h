@@ -64,6 +64,51 @@ public:
         this->client.loginWithUri(appsettings.sysuri, uid, pswd, device, err);
         return this;
     }
+
+    /**
+     * Register device to a synode. Must be called after logged in.
+     * @brief asyregist_device
+     * @param s
+     * @param ok
+     * @param err
+     */
+    void regist_device(const AnclientSettings& s, const OnOk& ok, const OnError& err) {
+        const string devid = s.device;
+        const string orgid = s.org;
+        const string market = s.market_id;
+        const string domid = s.domain;
+        const string pswd = s.domain_token;
+
+        client.header.Act(appsettings.sysuri, Port::docoll, RegistReq::A::queryDomConfig, "query sync");
+
+        DocsReq req;
+        req.a = DocsReq::A::registDev;
+        // req.market = market; ISSUE AnsonHeader need a "market" field.
+        req.device = Device{};
+
+        anlog("Register Device Request\n"s + client.ssInf.toBlock(*client.jserv.jprotocol.ctx));
+        AnsonMsg<DocsReq> q = client.userReq(appsettings.sysuri, Port{client.jserv.jprotocol.ctx, Port::docoll}, req)
+                  .Header(client.ssInf);
+
+        try {
+        anlog(q.toBlock(*client.jserv.jprotocol.ctx));
+        RegistResp resp = client.commit<RegistResp>(q, err);
+        andebug("asyquery_domconfig() ok: "s + resp.toBlock(*client.jserv.jprotocol.ctx));
+        ok(resp);
+        }
+        catch (const SemanticException& e) {
+        anerror(e.what());
+        }
+        catch (const AnsonException& e) {
+        anerror(e.what());
+        }
+        catch (const std::exception& e) {
+        anerror(e.what());
+        }
+        catch (...) {
+        anerror("Caught unknown exception.");
+        }
+    }
 };
 
 class RegistryClient : public SessionClient {
@@ -88,6 +133,7 @@ public:
             LangExt::mustnonull(orgid);
             anlog(ssInf.toBlock(*jserv.jprotocol.ctx));
             anlog(jserv.jserv());
+            // bringup-link?
             if (LangExt::isblank(ssInf.ssid)) {
                 loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
                 this->appsettings.centralPswd, this->appsettings.device, err);
@@ -163,10 +209,10 @@ public:
             req.market = market;
             req.diction = dict;
 
-            anlog("=========================\n"s + ssInf.toBlock(*jserv.jprotocol.ctx));
+            anlog("Query Domain Config Request\n"s + ssInf.toBlock(*jserv.jprotocol.ctx));
             AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{jserv.jprotocol.ctx, Centralport::regist}, req)
                                         .Header(ssInf);
-            anlog("=========================\n"s + q.toBlock(*jserv.jprotocol.ctx));
+            // anlog("=========================\n"s + q.toBlock(*jserv.jprotocol.ctx));
 
             try {
                 anlog(q.toBlock(*jserv.jprotocol.ctx));

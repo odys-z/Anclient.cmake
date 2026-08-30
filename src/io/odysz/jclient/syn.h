@@ -91,22 +91,26 @@ public:
                   .Header(client.ssInf);
 
         try {
-        anlog(q.toBlock(*client.jserv.jprotocol.ctx));
-        RegistResp resp = client.commit<RegistResp>(q, err);
-        andebug("asyquery_domconfig() ok: "s + resp.toBlock(*client.jserv.jprotocol.ctx));
-        ok(resp);
+            anlog(q.toBlock(*client.jserv.jprotocol.ctx));
+            RegistResp resp = client.commit<RegistResp>(q, err);
+            andebug("asyquery_domconfig() ok: "s + resp.toBlock(*client.jserv.jprotocol.ctx));
+            ok(resp);
         }
         catch (const SemanticException& e) {
-        anerror(e.what());
+            anerror(e.what());
+            err(MsgCode::Code::exSemantic, e.what(), {});
         }
         catch (const AnsonException& e) {
-        anerror(e.what());
+            anerror(e.what());
+            err(MsgCode::Code::exGeneral, e.what(), {});
         }
         catch (const std::exception& e) {
-        anerror(e.what());
+            anerror(e.what());
+            err(MsgCode::Code::exGeneral, e.what(), {});
         }
         catch (...) {
-        anerror("Caught unknown exception.");
+            anerror("Caught unknown exception.");
+            err(MsgCode::Code::exGeneral, "Unknown Exception", {});
         }
     }
 };
@@ -129,8 +133,8 @@ public:
     void asyquery_orgdoms(const string& org, const OnOk& ok, const OnError& err) {
       std::thread query_thread([this, org, ok, err]() {
         try {
-            LangExt::mustnonull(market);
-            LangExt::mustnonull(orgid);
+            LangExt::mustnonull(market, "Market ID is empty.");
+            LangExt::mustnonull(orgid, "Org / Community is empty.");
             anlog(ssInf.toBlock(*jserv.jprotocol.ctx));
             anlog(jserv.jserv());
             // bringup-link?
@@ -167,15 +171,19 @@ public:
         }
         catch (const SemanticException& e) {
             anerror(e.what());
+            err(MsgCode::Code::exSemantic, e.what(), {});
         }
         catch (const AnsonException& e) {
             anerror(e.what());
+            err(MsgCode::Code::exGeneral, e.what(), {});
         }
         catch (const std::exception& e) {
             anerror(e.what());
+            err(MsgCode::Code::exGeneral, e.what(), {});
         }
         catch (...) {
             anerror("Caught unknown exception.");
+            err(MsgCode::Code::exGeneral, "Unknown Exception", {});
         }
       });
       query_thread.detach();
@@ -222,15 +230,19 @@ public:
             }
             catch (const SemanticException& e) {
                 anerror(e.what());
+                err(MsgCode::Code::exSemantic, e.what(), {});
             }
             catch (const AnsonException& e) {
                 anerror(e.what());
+                err(MsgCode::Code::exGeneral, e.what(), {});
             }
             catch (const std::exception& e) {
                 anerror(e.what());
+                err(MsgCode::Code::exGeneral, e.what(), {});
             }
             catch (...) {
                 anerror("Caught unknown exception.");
+                err(MsgCode::Code::exGeneral, "Unknown Exception", {});
             }
         });
         query_thread.detach();

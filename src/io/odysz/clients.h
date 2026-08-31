@@ -37,13 +37,17 @@ using OnLink = std::function<void(connect_state)>;
 
 class SessionClient {
 
-	bool stoplink;
+    // bool stoplink;
+
 	string syncFlag;
-    // AnsonMsg<HeartBeat> beatReq;
+
 	int msInterval;
 
     const OnLink synlink_flipped;
     const OnError beat_err;
+
+    std::jthread beat_thread;
+
 public:
     bool heartbeating = false;
 
@@ -85,6 +89,7 @@ public:
         anlog(url);
 
         cpr::Response r = cpr::Post(
+            cpr::Timeout(6 * 1000),
             cpr::Url{url},
             cpr::Proxies{{"https", ""}, {"http", ""}},
             cpr::Verbose{verbose},
@@ -164,7 +169,10 @@ public:
         return SessionClient::userReq<T>(header, uri, port, bodyItem, act);
     }
 
-    void stopbeat() { stoplink = true; }
+    void stopbeat() {
+        // stoplink = true;
+        beat_thread.request_stop();
+    }
 
     SessionClient* openLink(const string& clientUri, int msInterv = 60000) noexcept {
         if (!this->jserv.jprotocol.ctx) {
@@ -174,7 +182,7 @@ public:
 
 		// link
 		syncFlag = "link";
-		stoplink = false;
+        // stoplink = false;
 
         HeartBeat beat{clientUri, ssInf.ssid, ssInf.uid};
         AnsonMsg<HeartBeat> beatReq = AnsonMsg<HeartBeat>{Port{jserv.jprotocol.ctx, Port::heartbeat}};
@@ -182,9 +190,14 @@ public:
 				.Body(beat);
 		
 		// msInterval = msInterv == null || msInterv.length < 1 ? 60000 : msInterv[0];
-        std::thread beat_thread([this, beatReq, msInterv]() {
+        beat_thread = std::jthread([this, beatReq, msInterv](std::stop_token stoken) {
+            std::mutex m;
+            std::condition_variable_any cv;
+            std::stop_callback cb(stoken, [&cv]{ cv.notify_all(); }); // Note: main thread can notify all, but that will expose m & cv to the main thread.
+
 			int failed = 0;
-            while (!stoplink) {
+            // while (!stoplink) {
+            while (!stoken.stop_requested()) {
                 try {
                     AnsonResp resp = commit<AnsonResp>(beatReq, beat_err);
                     anlog(resp.m);
@@ -205,11 +218,15 @@ public:
                     anwarn(e.what());
                 }
                 catch (runtime_error e) { anerror(e.what()); }
-                std::this_thread::sleep_for(std::chrono::milliseconds(std::max(2000, msInterv)));
+
+                // std::this_thread::sleep_for(std::chrono::milliseconds(std::max(2000, msInterv)));
+                std::unique_lock<std::mutex> lock(m);
+                cv.wait_for(lock, std::chrono::milliseconds(std::max(2000, msInterv)),
+                            [&stoken]{ return stoken.stop_requested(); });
             }
             heartbeating = false;
 		});
-        beat_thread.detach();
+        // beat_thread.detach();
 		
         return this;
     }

@@ -79,15 +79,19 @@ public:
         const string domid = s.domain;
         const string pswd = s.domain_token;
 
-        client.header.Act(appsettings.sysuri, Port::docoll, RegistReq::A::queryDomConfig, "query sync");
+        client.header.Act(appsettings.sysuri, SynDocollPort::docoll, RegistReq::A::queryDomConfig, "query sync");
 
         DocsReq req;
         req.a = DocsReq::A::registDev;
-        // req.market = market; ISSUE AnsonHeader need a "market" field.
+        req.synuri = appsettings.synuri;
+        req.uri = appsettings.synuri;
+
+        // ISSUE AnsonHeader need a "market" field.
+        // req.market = market;
         req.device = Device{};
 
         anlog("Register Device Request\n"s + client.ssInf.toBlock(*client.jserv.jprotocol.ctx));
-        AnsonMsg<DocsReq> q = client.userReq(appsettings.sysuri, Port{client.jserv.jprotocol.ctx, Port::docoll}, req)
+        AnsonMsg<DocsReq> q = client.userReq(appsettings.sysuri, SynDocollPort{client.jserv.jprotocol.ctx, SynDocollPort::docoll}, req)
                   .Header(client.ssInf);
 
         try {

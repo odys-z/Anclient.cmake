@@ -12,6 +12,30 @@
 
 namespace anson {
 
+class SynDocollPort : public anson::JavaEnum {
+public:
+    inline static const std::string _type_ = "io.oz.album.peer.SynDocollPort";
+
+    inline static const string heartbeat = "ping.serv";
+    inline static const string session = "login.serv";
+    inline static const string userstier = "users.less";
+    inline static const string editor = "editor.less";
+    inline static const string docoll = "docoll.syn";
+    inline static const string docstier = "docs.tier";
+    inline static const string menu = "menu.serv";
+    inline static const string settings = "settings.less";
+    inline static const string regist = "regist.serv";
+
+    SynDocollPort(const JsonOpt* ctx) : JavaEnum(ctx, _type_, "_sentinel_") {
+        Anclass(_type_);
+    }
+
+    SynDocollPort(const JsonOpt* ctx, const string& enumval) : JavaEnum(ctx, _type_, enumval) {
+        Anclass(_type_);
+    }
+};
+
+
 class PageInf : public anson::Anson {
 public:
     inline static const std::string _type_ = "io.odysz.transact.sql.PageInf";
@@ -583,6 +607,7 @@ inline static void load_docsrespAst(JsonOpt* ctx, const string &ast_path) {
 
 inline static void register_doctier(JsonOpt* ctx, const string &ast_folder) {
     filesystem::path folder_path{ast_folder};
+    register_iport<SynDocollPort>(ctx, (folder_path / "./syndocoll.ast.json").string());
     register_pageinfAst(ctx);
     register_deviceAst(ctx);
     register_synentityAst(ctx);

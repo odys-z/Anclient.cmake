@@ -67,36 +67,40 @@ public:
 
     /**
      * Register device to a synode. Must be called after logged in.
+     * The java side (0.8.0) will check devname, if not null, will return a device id.
+     *
      * @brief asyregist_device
      * @param s
      * @param ok
      * @param err
      */
-    void regist_device(const AnclientSettings& s, const OnOk& ok, const OnError& err) {
-        const string devid = s.device;
+    void regist_device(const AnclientSettings& s, const string& devname, const OnOk& ok, const OnError& err) {
+        // const string devid = s.device;
+        // const string devname = devname;
         const string orgid = s.org;
         const string market = s.market_id;
         const string domid = s.domain;
         const string pswd = s.domain_token;
 
-        client.header.Act(appsettings.sysuri, SynDocollPort::docoll, RegistReq::A::queryDomConfig, "query sync");
+        client.header.Act(s.sysuri, SynDocollPort::docoll, RegistReq::A::queryDomConfig, "query sync");
 
         DocsReq req;
         req.a = DocsReq::A::registDev;
-        req.synuri = appsettings.synuri;
-        req.uri = appsettings.synuri;
+        req.synuri = s.synuri;
+        req.uri = s.synuri;
 
         // ISSUE AnsonHeader need a "market" field.
         // req.market = market;
         req.device = Device{};
+        req.device.devname = devname;
 
         anlog("Register Device Request\n"s + client.ssInf.toBlock(*client.jserv.jprotocol.ctx));
-        AnsonMsg<DocsReq> q = client.userReq(appsettings.sysuri, SynDocollPort{client.jserv.jprotocol.ctx, SynDocollPort::docoll}, req)
+        AnsonMsg<DocsReq> q = client.userReq(s.sysuri, SynDocollPort{client.jserv.jprotocol.ctx, SynDocollPort::docoll}, req)
                   .Header(client.ssInf);
 
         try {
             anlog(q.toBlock(*client.jserv.jprotocol.ctx));
-            RegistResp resp = client.commit<RegistResp>(q, err);
+            DocsResp resp = client.commit<DocsResp>(q, err);
             andebug("asyquery_domconfig() ok: "s + resp.toBlock(*client.jserv.jprotocol.ctx));
             ok(resp);
         }

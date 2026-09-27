@@ -151,13 +151,13 @@ public:
                 this->appsettings.centralPswd, this->appsettings.device, err);
             }
 
-            if (!heartbeating) {
-                openLink(appsettings.sysuri);
-            }
-
             if (LangExt::isblank(ssInf.ssid)) {
                 anwarn("Cannot login to "s + this->jserv.jserv());
                 return;
+            }
+
+            if (!heartbeating) {
+                openLink(appsettings.sysuri);
             }
 
             header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomx, "query sync");
@@ -204,14 +204,19 @@ public:
                              this->appsettings.centralPswd, this->appsettings.device, err);
             }
 
+            if (LangExt::isblank(ssInf.ssid)) {
+                anwarn("Cannot login to "s + jserv.jserv());
+                return;
+            }
+
             if (!heartbeating) {
                 openLink(appsettings.sysuri);
             }
 
-            if (LangExt::isblank(ssInf.ssid)) {
-                anwarn("Cannot login to "s + this->jserv.jserv());
-                return;
-            }
+            // if (LangExt::isblank(ssInf.ssid)) {
+            //     anwarn("Cannot login to "s + this->jserv.jserv());
+            //     return;
+            // }
 
             header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomConfig, "query sync");
 

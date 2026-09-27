@@ -16,7 +16,6 @@
 
 #include "io/odysz/semantier.h"
 #include "io/odysz/clients.h"
-#include "io/odysz/jclient/syn.h"
 #include "../src/io/odysz/gen/anclient_settings.hpp"
 
 using namespace std;

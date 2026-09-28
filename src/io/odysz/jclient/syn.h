@@ -147,7 +147,7 @@ public:
             anlog(jserv.jserv());
             // bringup-link?
             if (LangExt::isblank(ssInf.ssid)) {
-                loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
+                loginWithUri(this->appsettings.sysuri, this->appsettings.centralUid,
                 this->appsettings.centralPswd, this->appsettings.device, err);
             }
 
@@ -201,7 +201,7 @@ public:
         std::thread query_thread([this, org, ok, err, domid]() {
             try {
                 if (LangExt::isblank(ssInf.ssid)) {
-                    loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
+                    loginWithUri(this->appsettings.sysuri, this->appsettings.centralUid,
                                  this->appsettings.centralPswd, this->appsettings.device, err);
                 }
 
@@ -254,6 +254,16 @@ public:
             }
         });
         query_thread.detach();
+    }
+
+    /**
+     * Switch registry / account. The caller must guarantee no query is in flight
+     * (example.slint: UserProfile.model.regist_busy).
+     */
+    void reset_session(const string& url) {
+        setjserv(url);
+        ssInf = SessionInf{};
+        header.ssid.clear();   // Header() rebuilds when ssid is blank
     }
 };
 

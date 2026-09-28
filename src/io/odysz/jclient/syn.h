@@ -151,13 +151,13 @@ public:
                 this->appsettings.centralPswd, this->appsettings.device, err);
             }
 
-            if (!heartbeating) {
-                openLink(appsettings.sysuri);
-            }
-
             if (LangExt::isblank(ssInf.ssid)) {
                 anwarn("Cannot login to "s + this->jserv.jserv());
                 return;
+            }
+
+            if (!heartbeating) {
+                openLink(appsettings.sysuri);
             }
 
             header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomx, "query sync");
@@ -199,38 +199,38 @@ public:
 
     void asyquery_domconfig(const string& org, const string& domid, const OnOk& ok, const OnError& err) {
         std::thread query_thread([this, org, ok, err, domid]() {
-            if (LangExt::isblank(ssInf.ssid)) {
-                loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
-                             this->appsettings.centralPswd, this->appsettings.device, err);
-            }
-
-            if (!heartbeating) {
-                openLink(appsettings.sysuri);
-            }
-
-            if (LangExt::isblank(ssInf.ssid)) {
-                anwarn("Cannot login to "s + this->jserv.jserv());
-                return;
-            }
-
-            header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomConfig, "query sync");
-
-            RegistReq req;
-            SynodeConfig dict;
-            dict.org.orgId = orgid;
-            dict.org.orgName = orgname;
-            dict.domain = domid;
-
-            req.a = RegistReq::A::queryDomConfig;
-            req.market = market;
-            req.diction = dict;
-
-            anlog("Query Domain Config Request\n"s + ssInf.toBlock(*jserv.jprotocol.ctx));
-            AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{jserv.jprotocol.ctx, Centralport::regist}, req)
-                                        .Header(ssInf);
-            // anlog("=========================\n"s + q.toBlock(*jserv.jprotocol.ctx));
-
             try {
+                if (LangExt::isblank(ssInf.ssid)) {
+                    loginWithUri(this->appsettings.sysuri, this->appsettings.admin,
+                                 this->appsettings.centralPswd, this->appsettings.device, err);
+                }
+
+                if (LangExt::isblank(ssInf.ssid)) {
+                    anwarn("Cannot login to "s + this->jserv.jserv());
+                    err(MsgCode::Code::exSession, "Cannot login to "s + this->jserv.jserv(), {});
+                    return;
+                }
+
+                if (!heartbeating) {
+                    openLink(appsettings.sysuri);
+                }
+
+                header.Act(appsettings.sysuri, Centralport::regist, RegistReq::A::queryDomConfig, "query sync");
+
+                RegistReq req;
+                SynodeConfig dict;
+                dict.org.orgId = orgid;
+                dict.org.orgName = orgname;
+                dict.domain = domid;
+
+                req.a = RegistReq::A::queryDomConfig;
+                req.market = market;
+                req.diction = dict;
+
+                anlog("Query Domain Config Request\n"s + ssInf.toBlock(*jserv.jprotocol.ctx));
+                AnsonMsg<RegistReq> q = userReq(appsettings.sysuri, Centralport{jserv.jprotocol.ctx, Centralport::regist}, req)
+                                        .Header(ssInf);
+
                 anlog(q.toBlock(*jserv.jprotocol.ctx));
                 RegistResp resp = commit<RegistResp>(q, err);
                 andebug("asyquery_domconfig() ok: "s + resp.toBlock(*jserv.jprotocol.ctx));

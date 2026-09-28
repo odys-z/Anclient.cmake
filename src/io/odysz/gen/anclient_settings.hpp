@@ -26,6 +26,7 @@ public:
     string admin;
     string domain_token;
     string regiserv;
+    string centralUid;
     string centralPswd;
     string temp_dir;
 
@@ -49,6 +50,7 @@ inline static void register_anclientsettingsAst(JsonOpt* ctx) {
         {"admin", {.dataAnclass="string"} },
         {"domain_token", {.dataAnclass="string"} },
         {"regiserv", {.dataAnclass="string"} },
+        {"centralUid", {.dataAnclass="string"} },
         {"centralPswd", {.dataAnclass="string"} },
         {"temp_dir", {.dataAnclass="string"} },
        });
@@ -69,6 +71,7 @@ inline static void register_anclientsettingsAst(JsonOpt* ctx) {
         .data<&anson::AnclientSettings::admin>("admin")
         .data<&anson::AnclientSettings::domain_token>("domain_token")
         .data<&anson::AnclientSettings::regiserv>("regiserv")
+        .data<&anson::AnclientSettings::centralUid>("centralUid")
         .data<&anson::AnclientSettings::centralPswd>("centralPswd")
         .data<&anson::AnclientSettings::temp_dir>("temp_dir")
         ;
@@ -99,6 +102,8 @@ inline static void register_anclientsettingsAst(JsonOpt* ctx) {
                     return entt::forward_as_meta(concrete.domain_token);
                 if ("regiserv" == fieldname)
                     return entt::forward_as_meta(concrete.regiserv);
+                if ("centralUid" == fieldname)
+                    return entt::forward_as_meta(concrete.centralUid);
                 if ("centralPswd" == fieldname)
                     return entt::forward_as_meta(concrete.centralPswd);
                 if ("temp_dir" == fieldname)

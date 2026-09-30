@@ -153,6 +153,7 @@ public:
 
             if (LangExt::isblank(ssInf.ssid)) {
                 anwarn("Cannot login to "s + this->jserv.jserv());
+                err(MsgCode::Code::exSession, "Cannot login to "s + this->jserv.jserv(), {});
                 return;
             }
 

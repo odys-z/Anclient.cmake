@@ -28,7 +28,7 @@ if(NOT DEFINED VCPKG_HOST_TRIPLET)
 endif()
 
 project(anclient.cmake
-    VERSION 0.1.0
+    VERSION 0.1.1
     DESCRIPTION "The cpp peer of Anclient.java"
     HOMEPAGE_URL "https://github.com/odys-z/Anclient.cmake"
     LANGUAGES CXX)

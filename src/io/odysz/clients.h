@@ -49,6 +49,10 @@ class SessionClient {
     std::jthread beat_thread;
 
 public:
+    // Owns a std::jthread: non-copyable by design.
+    SessionClient(const SessionClient&) = delete;
+    SessionClient& operator=(const SessionClient&) = delete;
+
     bool heartbeating = false;
 
     /**

@@ -79,7 +79,7 @@ TEST(ANCLIENT, AnSESSION) {
     anlog("1 ==================================================");
     doclient.loginWithUri("ody", plainkey, "test.device", errctx);
 
-    SessionClient c = doclient.client;
+    SessionClient& c = doclient.client;
     ASSERT_EQ("ody", c.ssInf.uid);
     anlog("token: "s + c.ssInf.ssToken);
     ASSERT_EQ(2, LangExt::split(c.ssInf.ssToken, ':').size());

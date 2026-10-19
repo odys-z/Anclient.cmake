@@ -54,14 +54,28 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 include(FetchContent)
 
-FetchContent_Declare(
-  anson.cmake
-  GIT_REPOSITORY https://github.com/odys-z/anson.cmake.git
-  GIT_TAG        main
-)
+#####################################################################################################
+# anson.cmake follows its branch: it is fetched again on every CMake run.
+# With CMP0168 NEW (cmake_minimum_required 3.30), FetchContent never re-fetches a branch once
+# populated, so it is declared with CMP0168 OLD (sub-build, whose update step always runs).
+# The policy is captured by FetchContent_Declare(), not by FetchContent_MakeAvailable().
+# cpr is pinned to a commit and keeps NEW.
+# Offline: configure with -DFETCHCONTENT_FULLY_DISCONNECTED=ON.
+# When built inside example.slint, the parent's declaration of anson.cmake is the one used.
+  set(FETCHCONTENT_UPDATES_DISCONNECTED_ANSON.CMAKE OFF CACHE BOOL "Always update anson.cmake" FORCE)
 
-set(ANSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(anson.cmake)
+  cmake_policy(PUSH)
+  cmake_policy(SET CMP0168 OLD)
+  FetchContent_Declare(
+    anson.cmake
+    GIT_REPOSITORY https://github.com/odys-z/anson.cmake.git
+    GIT_TAG        main
+  )
+  cmake_policy(POP)
+
+  set(ANSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(anson.cmake)
+#####################################################################################################
 
 # Requires: pip install meson (cpr builds libcurl via meson)
 FetchContent_Declare(

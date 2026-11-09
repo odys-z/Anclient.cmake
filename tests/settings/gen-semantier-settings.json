@@ -1,7 +1,7 @@
 { "type"      : "io.odysz.reflect.PeerSettings",
   "tier_name" : "semantier",
   "ansonMsg"  : "io.odysz.semantic.jprotocol.AnsonMsg",
-  "ansons"    : [],
+  "ansons"    : ["jprofile.ast.json"],
   "anRequests": ["heartbeat.ast.json",
                  "./session-req.ast.json",
                  "./session-resp.ast.json"],

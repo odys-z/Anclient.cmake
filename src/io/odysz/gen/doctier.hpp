@@ -39,9 +39,9 @@ public:
 class PageInf : public anson::Anson {
 public:
     inline static const std::string _type_ = "io.odysz.transact.sql.PageInf";
-    long page;
-    long size;
-    long total;
+    long page{};
+    long size{};
+    long total{};
     vector<vector<string>> arrCondts;
     map<string, vector<LangExt::VarType>> mapCondts;
 
@@ -236,8 +236,8 @@ class PathsPage : public anson::Anson {
 public:
     inline static const std::string _type_ = "io.odysz.semantic.tier.docs.PathsPage";
     string device;
-    int start;
-    int end;
+    int start{};
+    int end{};
     map<string, vector<LangExt::VarType>> clientPaths;
 
     PathsPage() : Anson() {
@@ -313,7 +313,7 @@ public:
     string uri64;
     string shareby;
     string sharedate;
-    long size;
+    long size{};
     string mime;
     string folder;
 
@@ -448,10 +448,10 @@ public:
     PathsPage syncingPage;
     Device device;
     vector<ExpSyncDoc> syncQueries;
-    int blockSeq;
+    int blockSeq{};
     string org;
-    bool reset;
-    int limit;
+    bool reset{};
+    int limit{};
 
     DocsReq() : UserReq() {
         Type(_type_);
@@ -546,7 +546,7 @@ public:
     string docTabl;
     PathsPage syncingPage;
     string collectId;
-    int blockSeqReply;
+    int blockSeqReply{};
     string org;
     Device device;
     string stamp;

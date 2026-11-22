@@ -106,7 +106,7 @@ public:
     string jserv;
     string optime;
     string oper;
-    long nyquence;
+    long nyquence{};
     string synuid;
 
     Synode() : Anson() {
@@ -202,10 +202,10 @@ public:
     SynOrg org;
     vector<Synode> peers;
     string mode;
-    bool https;
+    bool https{};
     string admin;
-    float syncIns;
-    int chsize;
+    float syncIns{};
+    int chsize{};
 
     SynodeConfig() : Anson() {
         Type(_type_);

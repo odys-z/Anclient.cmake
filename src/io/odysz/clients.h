@@ -41,7 +41,7 @@ class SessionClient {
 
 	string syncFlag;
 
-	int msInterval;
+	int msInterval{};
 
     const OnLink synlink_flipped;
     const OnError beat_err;

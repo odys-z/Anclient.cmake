@@ -69,21 +69,37 @@ include(FetchContent)
   FetchContent_Declare(
     anson.cmake
     GIT_REPOSITORY https://github.com/odys-z/anson.cmake.git
-    GIT_TAG        main
+    GIT_TAG        origin/portfolio-0.8
   )
   cmake_policy(POP)
 
   set(ANSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(anson.cmake)
+
+    # 2026.11.26 Disable quiet update
+    FetchContent_MakeAvailable(anson.cmake)
+    FetchContent_GetProperties(anson.cmake SOURCE_DIR ANSON_SRC_DIR)
+    execute_process(
+        COMMAND git log -1 --oneline --date=short "--format=%h - %s (%cd)"
+        WORKING_DIRECTORY "${ANSON_SRC_DIR}"
+        OUTPUT_VARIABLE ANSON_GIT_INFO
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "anson.cmake (${ANSON_SRC_DIR}) HEAD: ${ANSON_GIT_INFO}")
 #####################################################################################################
 
+# 2026.11.26, depending cpr on local vcpkg.
 # Requires: pip install meson (cpr builds libcurl via meson)
-FetchContent_Declare(
-  cpr
-  GIT_REPOSITORY https://github.com/libcpr/cpr.git
-  GIT_TAG f091b2c061b307ee89b164c39976fc9202a1c79d) # 1.14.2
+# FetchContent_Declare(
+#   cpr
+#   GIT_REPOSITORY https://github.com/libcpr/cpr.git
+#   GIT_TAG f091b2c061b307ee89b164c39976fc9202a1c79d) # 1.14.2
+# FetchContent_Ma]]keAvailable(cpr)
 
-FetchContent_MakeAvailable(cpr)
+# 2026.11.26, depending cpr on local vcpkg.
+# Linux: cd ~/github/vcpkg && ./vcpkg install cpr:x64-linux
+# Windows (MinGW) ./vcpkg install cpr:x64-mingw-dynamic
+find_package(cpr CONFIG REQUIRED)
 
 if(WIN32)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

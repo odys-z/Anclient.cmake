@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.30)
 
 # Forces gcc/g++ for sub-builds (works around meson picking up MSVC for libpsl
 # on Windows). Harmless on Linux/macOS where these are already the default.
-set(ENV{CC} "gcc")
-set(ENV{CXX} "g++")
-set(CPR_CURL_USE_LIBPSL OFF CACHE BOOL "" FORCE)
+# 2026.11.26 We are using vcpkg/cpr, these are not used:
+# set(ENV{CC} "gcc")
+# set(ENV{CXX} "g++")
+# set(CPR_CURL_USE_LIBPSL OFF CACHE BOOL "" FORCE)
 
 # vcpkg must be checked out as a sibling directory: ../vcpkg. See README.
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
